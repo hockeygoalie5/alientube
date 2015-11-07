@@ -8,7 +8,7 @@ body {
 	overflow: hidden;
 }
 
-#alientube {
+#royt {
     font-family: -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", "Helvetica", Arial, sans-serif;
     padding-bottom: 20px;
     width: 100%;
@@ -45,7 +45,7 @@ body {
         }
     }
 
-    & .at_load {
+    & .royt_load {
         color: #0066aa;
         font-size: x-small;
         cursor: pointer;
@@ -64,12 +64,12 @@ body {
             }
         }
 
-        &.loading + .at_replycount {
+        &.loading + .royt_replycount {
             display: none;
         }
     }
 
-    & .at_replycount {
+    & .royt_replycount {
         color: #a2a2a2;
         font-size: x-small;
     }
@@ -129,7 +129,7 @@ body {
             font-size: 130%;
         }
 
-        .at_author[data-username="[deleted]"] {
+        .royt_author[data-username="[deleted]"] {
             color: #737373;
             font-weight: normal;
             pointer-events: none;
@@ -144,7 +144,7 @@ body {
             width: 40px;
         }
 
-        & .at_official {
+        & .royt_official {
             border: solid 1px #579654;
             color: #579654 !important;
             margin-top: 8px;
@@ -256,7 +256,7 @@ body {
         }
     }
 
-    & .at_maximise {
+    & .royt_maximise {
         font-size: x-small;
         padding-left: 20px;
     }
@@ -267,7 +267,7 @@ body {
         break-word: all;
         padding-bottom: 10px;
 
-        & .at_togglehide:before {
+        & .royt_togglehide:before {
             content: "[-]";
         }
 
@@ -277,7 +277,7 @@ body {
             color: #a2a2a2;
         }
 
-        & .at_author {
+        & .royt_author {
             font-weight: bold;
 
             &[data-username="[deleted]"] {
@@ -318,12 +318,12 @@ body {
             }
         }
 
-        & .at_score {
+        & .royt_score {
             font-weight: bold;
             color: #333;
         }
 
-        & .at_commentcontent {
+        & .royt_commentcontent {
             & p {
                 margin-top: 5px;
                 margin-bottom: 5px;
@@ -376,31 +376,31 @@ body {
             padding-top: 0;
             padding-bottom: 10px !important;
 
-            & .at_author {
+            & .royt_author {
                 color: gray !important;
                 background: transparent;
             }
 
-            & .at_togglehide:before {
+            & .royt_togglehide:before {
                 content: "[+]";
                 color: gray;
             }
 
             & .options,
             & .vote,
-            & .at_replies,
-            & .at_commentcontent {
+            & .royt_replies,
+            & .royt_commentcontent {
                 display: none;
             }
         }
 
         &.deleted {
-            & > .at_commentmain {
+            & > .royt_commentmain {
                 & > .options {
                     display: none;
                 }
 
-                & > .at_commentcontent {
+                & > .royt_commentcontent {
                     display: inline-block;
                     color: gray;
                     background-color: #f0f0f0;
@@ -410,12 +410,12 @@ body {
             }
         }
 
-        & .at_timestamp.edited:after {
+        & .royt_timestamp.edited:after {
             content: " (*"attr(title)")";
         }
     }
 
-    & .at_replies {
+    & .royt_replies {
         padding-top: 15px;
         padding-left: 15px;
 
@@ -426,7 +426,7 @@ body {
         }
     }
 
-    & .at_flair {
+    & .royt_flair {
         padding: 0 2px;
         background: #f5f5f5;
         color: #555;
@@ -451,7 +451,7 @@ body {
         }
     }
 
-    & .at_gilded {
+    & .royt_gilded {
         display: none;
         color: #99895F;
         font-size: .9em;
@@ -476,7 +476,7 @@ body {
         }
     }
 
-    .at_report {
+    .royt_report {
         background: #f6e69f;
         border: thin solid #d8bb3c;
         border-radius: 3px;
@@ -500,7 +500,7 @@ body {
         }
     }
 
-    & .at_commentfield {
+    & .royt_commentfield {
         margin-top: 10px;
         font-family: -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", "Helvetica", Arial, sans-serif;
         color: #000;
@@ -509,16 +509,16 @@ body {
         font-weight: 300;
 
 
-        & .at_textarea {
+        & .royt_textarea {
             width: 100%;
             min-height: 120px;
         }
 
-        & .at_writingauthor {
+        & .royt_writingauthor {
             float: right;
         }
 
-        & .at_comment_preview {
+        & .royt_comment_preview {
             display: none;
             position: relative;
             min-height: 85px;
@@ -527,14 +527,14 @@ body {
             margin-top: 20px;
 
 
-            & .at_preview_header {
+            & .royt_preview_header {
                 font-size: 130%;
                 padding: 10px;
                 vertical-align: middle;
                 line-height: 20px;
             }
 
-            & .at_preview_contents {
+            & .royt_preview_contents {
                 box-sizing: border-box;
                 padding: 10px;
                 background: repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(166, 166, 166, 0.0666667) 40px, rgba(166, 166, 166, 0.0666667) 80px) rgb(255, 255, 255);
@@ -545,16 +545,16 @@ body {
         }
     }
 
-    #at_switchtogplus {
+    #royt_switchtogplus {
         right: 15px;
     }
 }
 
-.at_commentmain {
+.royt_commentmain {
     margin-left: 20px;
 }
 
-.at_tab {
+.royt_tab {
     @include flex-grow(1);
     border: 0;
     font-family: -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", "Helvetica", Arial, sans-serif !important;
@@ -608,34 +608,34 @@ body {
         pointer-events: none;
         opacity: 0.5;
     }
-    & .at_submit {
+    & .royt_submit {
         display: none;
     }
 }
 
-#at_tabcontainer {
+#royt_tabcontainer {
     margin-left: 4px;
     position: relative;
     @include display(flex);
     @include flex-direction(row);
     
-    &.single .at_tab.active {
+    &.single .royt_tab.active {
         padding-bottom: 5px;
         border-bottom: 0;
     }
 }
 
-#at_comments {
+#royt_comments {
     padding-left: 20px;
     padding-right: 20px;
 
     &.signedout,
     &.preserved {
         & .commentTo,
-        & .at_reply,
+        & .royt_reply,
         & .report,
-        & .at_edit,
-        & .at_delete,
+        & .royt_edit,
+        & .royt_delete,
         & .giveGold {
             display: none;
         }
@@ -648,18 +648,18 @@ body {
     }
 }
 
-.at_loadmore {
+.royt_loadmore {
     padding-bottom: 10px !important;
 }
 
 @-moz-document url-prefix() {
-    .at_tab {
+    .royt_tab {
         padding-left: 8px;
         padding-right: 8px;
     }
 }
 
-#at_overflow {
+#royt_overflow {
     display: inline-block;
     position: relative;
     box-sizing: border-box;
@@ -733,7 +733,7 @@ body {
     }
 }
 
-.at_error {
+.royt_error {
     padding-top: 20px;
     padding-bottom: 20px;
     width: 500px;
@@ -873,8 +873,8 @@ a[href$="/spoiler"]::before {
     }
 }
 
-#at_switchtogplus,
-#at_switchtoreddit {
+#royt_switchtogplus,
+#royt_switchtoreddit {
     position: absolute;
     top: 20px;
     right: 0;
@@ -907,7 +907,7 @@ a[href$="/spoiler"]::before {
     }
 }
 
-#at_switchtoreddit {
+#royt_switchtoreddit {
     display: none;
     position: static;
     margin-top: 10px;
@@ -927,7 +927,7 @@ a[href$="/spoiler"]::before {
         background: #3e3e3e!important;
     }
 
-    & .at_tab {
+    & .royt_tab {
         text-shadow: none;
         background: #242424 !important;
 
@@ -948,7 +948,7 @@ a[href$="/spoiler"]::before {
         }
     }
 
-    & #at_overflow {
+    & #royt_overflow {
         background: #242424 !important;
 
         &:hover {
@@ -960,25 +960,25 @@ a[href$="/spoiler"]::before {
         }
     }
 
-    & .at_score,
-    & .at_commentcontent > span > p {
+    & .royt_score,
+    & .royt_commentcontent > span > p {
         color: #f6f6f6 !important;
     }
 
-    & article.deleted > .at_commentmain > .at_commentcontent {
+    & article.deleted > .royt_commentmain > .royt_commentcontent {
         background: rgb(79, 79, 79);
     }
 
-    & #at_switchtogplus svg,
-    & #at_switchtoreddit svg {
+    & #royt_switchtogplus svg,
+    & #royt_switchtoreddit svg {
         fill: #fff;
     }
     
-    & .at_writingauthor {
+    & .royt_writingauthor {
         color: #acacac;
     }
     
-    & .at_replies article {
+    & .royt_replies article {
         border-left: 1px dotted #7c7c7c !important;
     }
 }
@@ -987,10 +987,10 @@ a[href$="/spoiler"]::before {
     margin-left: 15px;
 }
 
-#alientube[service='YouTube'] {
+#royt[service='YouTube'] {
     margin-top: 30px;
     
-    & .at_tab.active {
+    & .royt_tab.active {
         border-bottom: 5px solid #fd4040;
 
         & > a {
@@ -999,7 +999,7 @@ a[href$="/spoiler"]::before {
         }
     }
     
-    &.darkmode .at_tab.active {
+    &.darkmode .royt_tab.active {
         border-bottom: 5px solid #ff5353;
 
         & a {
@@ -1007,16 +1007,16 @@ a[href$="/spoiler"]::before {
         }
     }
     
-    #at_overflow > ul > li:hover {
+    #royt_overflow > ul > li:hover {
         background: #fd4040;
     }
 }
 
-#alientube[service='Vimeo'] {
+#royt[service='Vimeo'] {
     box-shadow: none;
     border: 0;
     
-    & .at_tab.active {
+    & .royt_tab.active {
         border-bottom: 5px solid #4bf;
 
         & > a {
@@ -1025,7 +1025,7 @@ a[href$="/spoiler"]::before {
         }
     }
     
-    &.darkmode .at_tab.active {
+    &.darkmode .royt_tab.active {
         border-bottom: 5px solid #4bf;
 
         & a {
@@ -1033,7 +1033,7 @@ a[href$="/spoiler"]::before {
         }
     }
     
-    #at_overflow > ul > li:hover {
+    #royt_overflow > ul > li:hover {
         background: #4bf;
     }
 }

@@ -1,3 +1,8 @@
+gen/
+
+.project
+.settings/
+
 Chrome/js/*
 Chrome/res/*
 Chrome/_locales/*
