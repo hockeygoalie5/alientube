@@ -23,13 +23,13 @@ module RoYT {
             this.commentThread = commentThread;
             var template = Application.getExtensionTemplateItem(this.commentThread.commentSection.template, "comment");
 
-            this.representedHTMLElement = <HTMLDivElement> template.querySelector(".at_comment");
+            this.representedHTMLElement = <HTMLDivElement> template.querySelector(".royt_comment");
 
             /* Set the id for the comment in question so it can be correlated with the Comment Object */
             this.representedHTMLElement.setAttribute("data-reddit-id", commentData.id);
 
             /* Show / collapse function for the comment */
-            let toggleHide = this.representedHTMLElement.querySelector(".at_togglehide");
+            let toggleHide = this.representedHTMLElement.querySelector(".royt_togglehide");
             toggleHide.addEventListener("click", function() {
                 if (this.representedHTMLElement.classList.contains("hidden")) {
                     this.representedHTMLElement.classList.remove("hidden")
@@ -44,7 +44,7 @@ module RoYT {
             }
 
             /* Set the link and name of author, as well as whether they are the OP or not. */
-            let author = this.representedHTMLElement.querySelector(".at_author");
+            let author = this.representedHTMLElement.querySelector(".royt_author");
             author.textContent = this.commentObject.author;
             author.setAttribute("href", "http://reddit.com/u/" + this.commentObject.author);
             author.setAttribute("data-username", this.commentObject.author);
@@ -58,11 +58,11 @@ module RoYT {
 
             /* Set the gild (how many times the user has been given gold for this post) if any */
             if (this.commentObject.gilded) {
-                this.representedHTMLElement.querySelector(".at_gilded").setAttribute("data-count", this.commentObject.gilded);
+                this.representedHTMLElement.querySelector(".royt_gilded").setAttribute("data-count", this.commentObject.gilded);
             }
 
             /* Add flair to the user */
-            let flair = <HTMLSpanElement> this.representedHTMLElement.querySelector(".at_flair");
+            let flair = <HTMLSpanElement> this.representedHTMLElement.querySelector(".royt_flair");
             if (this.commentObject.author_flair_text) {
                 flair.textContent = this.commentObject.author_flair_text;
             } else {
@@ -70,12 +70,12 @@ module RoYT {
             }
 
             /* Set the score of the comment next to the user tag */
-            let score = <HTMLSpanElement> this.representedHTMLElement.querySelector(".at_score");
+            let score = <HTMLSpanElement> this.representedHTMLElement.querySelector(".royt_score");
             let scorePointsText = this.commentObject.score === 1 ? Application.localisationManager.get("post_current_score") : Application.localisationManager.get("post_current_score_plural");
             score.textContent = (this.commentObject.score + scorePointsText);
 
             /* Set the timestamp of the comment */
-            let timestamp = <HTMLSpanElement> this.representedHTMLElement.querySelector(".at_timestamp");
+            let timestamp = <HTMLSpanElement> this.representedHTMLElement.querySelector(".royt_timestamp");
             timestamp.textContent = Application.getHumanReadableTimestamp(this.commentObject.created_utc);
             timestamp.setAttribute("timestamp", new Date(this.commentObject.created_utc).toISOString());
             
@@ -86,7 +86,7 @@ module RoYT {
             }
 
             /* Render the markdown and set the actual comement messsage of the comment */
-            let contentTextOfComment = this.representedHTMLElement.querySelector(".at_commentcontent");
+            let contentTextOfComment = this.representedHTMLElement.querySelector(".royt_commentcontent");
             let contentTextHolder = document.createElement("span");
 
             /* Terrible workaround: Reddit text is double encoded with html entities for some reason, so we have to insert it into the DOM
@@ -102,22 +102,22 @@ module RoYT {
             }
 
             /* Set the button text and event handler for the reply button. */
-            let replyToComment = this.representedHTMLElement.querySelector(".at_reply");
+            let replyToComment = this.representedHTMLElement.querySelector(".royt_reply");
             replyToComment.textContent = Application.localisationManager.get("post_button_reply");
             replyToComment.addEventListener("click", this.onCommentButtonClick.bind(this), false);
 
             /* Set the button text and link for the "permalink" button */
-            let permalinkElement = this.representedHTMLElement.querySelector(".at_permalink");
+            let permalinkElement = this.representedHTMLElement.querySelector(".royt_permalink");
             permalinkElement.textContent = Application.localisationManager.get("post_button_permalink");
             permalinkElement.setAttribute("href", `http://www.reddit.com${commentThread.threadInformation.permalink}${this.commentObject.id}`);
 
             /* Set the button text and link for the "parent" link button */
-            let parentLinkElement = this.representedHTMLElement.querySelector(".at_parentlink");
+            let parentLinkElement = this.representedHTMLElement.querySelector(".royt_parentlink");
             parentLinkElement.textContent = Application.localisationManager.get("post_button_parent");
             parentLinkElement.setAttribute("href", `http://www.reddit.com${commentThread.threadInformation.permalink}#${this.commentObject.parent_id.substring(3)}`);
 
             /* Set the button text and the event handler for the "show source" button */
-            let displaySourceForComment = this.representedHTMLElement.querySelector(".at_displaysource");
+            let displaySourceForComment = this.representedHTMLElement.querySelector(".royt_displaysource");
             displaySourceForComment.textContent = Application.localisationManager.get("post_button_source");
             displaySourceForComment.addEventListener("click", this.onSourceButtonClick.bind(this), false);
 
@@ -137,8 +137,8 @@ module RoYT {
             giveGoldToUser.textContent = Application.localisationManager.get("post_button_gold");
 
             let reportToAdministrators = this.representedHTMLElement.querySelector(".report");
-            let editPost = this.representedHTMLElement.querySelector(".at_edit");
-            let deletePost = this.representedHTMLElement.querySelector(".at_delete");
+            let editPost = this.representedHTMLElement.querySelector(".royt_edit");
+            let deletePost = this.representedHTMLElement.querySelector(".royt_delete");
             if (this.commentObject.author === Preferences.getString("username")) {
                 /* Report button does not make sense on our own post, so let's get rid of it */
                 reportToAdministrators.parentNode.removeChild(reportToAdministrators);
@@ -172,7 +172,7 @@ module RoYT {
 
             /* Continue traversing down and populate the replies to this comment. */
             if (this.commentObject.replies) {
-                let replyContainer = this.representedHTMLElement.querySelector(".at_replies");
+                let replyContainer = this.representedHTMLElement.querySelector(".royt_replies");
                 this.commentObject.replies.data.children.forEach(function (commentObject) {
                     if (commentObject.kind === "more") {
                         let readmore = new LoadMore(commentObject.data, this, commentThread);
@@ -224,7 +224,7 @@ module RoYT {
             let upvoteController = <HTMLDivElement> eventObject.target;
             let voteController = <HTMLDivElement> upvoteController.parentNode;
             let parentNode = <HTMLDivElement> voteController.parentNode;
-            let scoreValue = <HTMLSpanElement> parentNode.querySelector(".at_score");
+            let scoreValue = <HTMLSpanElement> parentNode.querySelector(".royt_score");
 
             if (this.commentObject.likes === true) {
                 /* The user already likes this post, so they wish to remove their current like. */
@@ -262,7 +262,7 @@ module RoYT {
             let downvoteController = <HTMLDivElement> eventObject.target;
             let voteController = <HTMLDivElement> downvoteController.parentNode;
             let parentNode = <HTMLDivElement> voteController.parentNode;
-            let scoreValue = <HTMLSpanElement> parentNode.querySelector(".at_score");
+            let scoreValue = <HTMLSpanElement> parentNode.querySelector(".royt_score");
 
             if (this.commentObject.likes === false) {
                 /* The user already dislikes this post, so they wish to remove their current dislike */
@@ -296,7 +296,7 @@ module RoYT {
          * @private
          */
         private onCommentButtonClick() {
-            let previousCommentBox = this.representedHTMLElement.querySelector(".at_commentfield");
+            let previousCommentBox = this.representedHTMLElement.querySelector(".royt_commentfield");
             if (previousCommentBox) {
                 previousCommentBox.parentNode.removeChild(previousCommentBox);
             }
@@ -308,7 +308,7 @@ module RoYT {
          * @private
          */
         private onSourceButtonClick() {
-            let previousCommentBox = this.representedHTMLElement.querySelector(".at_commentfield");
+            let previousCommentBox = this.representedHTMLElement.querySelector(".royt_commentfield");
             if (previousCommentBox) {
                 previousCommentBox.parentNode.removeChild(previousCommentBox);
             }
@@ -320,7 +320,7 @@ module RoYT {
          * @private
          */
         private onEditPostButtonClick() {
-            let previousCommentBox = this.representedHTMLElement.querySelector(".at_commentfield");
+            let previousCommentBox = this.representedHTMLElement.querySelector(".royt_commentfield");
             if (previousCommentBox) {
                 previousCommentBox.parentNode.removeChild(previousCommentBox);
             }

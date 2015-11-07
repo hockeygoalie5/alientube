@@ -110,12 +110,12 @@ module RoYT {
 
                                     // Generate tabs.
                                     let tabContainerTemplate = Application.getExtensionTemplateItem(this.template, "tabcontainer");
-                                    let tabContainer = <HTMLDivElement> tabContainerTemplate.querySelector("#at_tabcontainer");
+                                    let tabContainer = <HTMLDivElement> tabContainerTemplate.querySelector("#royt_tabcontainer");
                                     this.insertTabsIntoDocument(tabContainer, 0);
                                     window.addEventListener("resize", this.updateTabsToFitToBoundingContainer.bind(this), false);
 
                                     let ApplicationContainer = this.set(tabContainer);
-                                    ApplicationContainer.appendChild(tabContainerTemplate.querySelector("#at_comments"));
+                                    ApplicationContainer.appendChild(tabContainerTemplate.querySelector("#royt_comments"));
 
                                     // If the selected post is prioritised, marked it as such
                                     if (this.threadCollection[0].id === preferredPost || this.threadCollection[0].subreddit === preferredSubreddit) {
@@ -156,7 +156,7 @@ module RoYT {
         */
         public downloadThread(threadData: any) {
             let loadingScreen = new LoadingScreen(this, LoadingState.LOADING, Application.localisationManager.get("loading_post_message"));
-            let roytCommentContainer = document.getElementById("at_comments");
+            let roytCommentContainer = document.getElementById("royt_comments");
             while (roytCommentContainer.firstChild) {
                 roytCommentContainer.removeChild(roytCommentContainer.firstChild);
             }
@@ -209,10 +209,10 @@ module RoYT {
 
             if (serviceCommentsContainer) {
                 /* Add the "switch to Reddit" button in the google+ comment section */
-                let redditButton = <HTMLDivElement> document.getElementById("at_switchtoreddit");
+                let redditButton = <HTMLDivElement> document.getElementById("royt_switchtoreddit");
                 if (!redditButton) {
                     let redditButtonTemplate = Application.getExtensionTemplateItem(this.template, "switchtoreddit");
-                    redditButton = <HTMLDivElement> redditButtonTemplate.querySelector("#at_switchtoreddit");
+                    redditButton = <HTMLDivElement> redditButtonTemplate.querySelector("#royt_switchtoreddit");
                     redditButton.addEventListener("click", this.onRedditClick, true);
                     serviceCommentsContainer.parentNode.insertBefore(redditButton, serviceCommentsContainer);
                 }
@@ -307,7 +307,7 @@ module RoYT {
             * @param [selectTabAtIndex] The tab to be in active / selected status.
         */
         public insertTabsIntoDocument(tabContainer: HTMLElement, selectTabAtIndex?: number) {
-            let overflowContainer = <HTMLDivElement> tabContainer.querySelector("#at_overflow");
+            let overflowContainer = <HTMLDivElement> tabContainer.querySelector("#royt_overflow");
             let len = this.threadCollection.length;
             let maxWidth;
             if (Application.currentMediaService() === Service.YouTube) {
@@ -327,7 +327,7 @@ module RoYT {
                         break;
                     }
                     let tab = document.createElement("button");
-                    tab.className = "at_tab";
+                    tab.className = "royt_tab";
                     tab.setAttribute("data-value", this.threadCollection[i].subreddit);
                     let tabLink = document.createElement("a");
                     tabLink.textContent = this.threadCollection[i].subreddit;
@@ -396,7 +396,7 @@ module RoYT {
             message.textContent = Application.localisationManager.get("post_label_noresults");
 
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
-            let googlePlusButton = template.querySelector("#at_switchtogplus");
+            let googlePlusButton = template.querySelector("#royt_switchtogplus");
             googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
 
             let googlePlusContainer = document.getElementById("watch-discussion");
@@ -412,7 +412,7 @@ module RoYT {
             googlePlusContainer.style.height = "auto";
                 document.getElementById("royt").style.display = "none";
 
-                let redditButton = <HTMLDivElement> document.getElementById("at_switchtoreddit");
+                let redditButton = <HTMLDivElement> document.getElementById("royt_switchtoreddit");
                 if (redditButton) {
                     redditButton.classList.add("noresults");
                 }
@@ -430,7 +430,7 @@ module RoYT {
             googlePlusContainer.style.height = "0";
             let roytContainer = document.getElementById("royt");
             roytContainer.style.display = "block";
-            let redditButton = <HTMLDivElement> document.getElementById("at_switchtoreddit");
+            let redditButton = <HTMLDivElement> document.getElementById("royt_switchtoreddit");
             redditButton.style.display = "none";
         }
     	
@@ -445,7 +445,7 @@ module RoYT {
             let googlePlusContainer = document.getElementById("watch-discussion");
             googlePlusContainer.style.visibility = "visible";
             googlePlusContainer.style.height = "auto";
-            let redditButton = <HTMLDivElement> document.getElementById("at_switchtoreddit");
+            let redditButton = <HTMLDivElement> document.getElementById("royt_switchtoreddit");
             redditButton.style.display = "block";
         }
 
@@ -457,12 +457,12 @@ module RoYT {
             /* Only perform the resize operation when we have a new frame to work on by the browser, any animation beyond this will not
             be rendered and is pointless. */
             window.requestAnimationFrame(function () {
-                let tabContainer = document.getElementById("at_tabcontainer");
+                let tabContainer = document.getElementById("royt_tabcontainer");
 
                 if (!tabContainer) {
                     return;
                 }
-                let overflowContainer = <HTMLDivElement> tabContainer.querySelector("#at_overflow");
+                let overflowContainer = <HTMLDivElement> tabContainer.querySelector("#royt_overflow");
 
                 /* Iterate over the tabs until we find the one that is currently selected, and store its value. */
                 for (let i = 0, len = tabContainer.children.length; i < len; i += 1) {
@@ -483,13 +483,13 @@ module RoYT {
             * Remove all tabs and overflow items from the DOM.
          */
         public clearTabsFromTabContainer() {
-            let tabContainer = document.getElementById("at_tabcontainer");
-            let overflowContainer = <HTMLDivElement> tabContainer.querySelector("#at_overflow");
+            let tabContainer = document.getElementById("royt_tabcontainer");
+            let overflowContainer = <HTMLDivElement> tabContainer.querySelector("#royt_overflow");
 
             /* Iterate over the tab elements and remove them all. Stopping short off the overflow button. */
             while (tabContainer.firstElementChild) {
                 let childElement = <HTMLUnknownElement> tabContainer.firstElementChild;
-                if (childElement.classList.contains("at_tab")) {
+                if (childElement.classList.contains("royt_tab")) {
                     tabContainer.removeChild(tabContainer.firstElementChild);
                 } else {
                     break;
@@ -513,7 +513,7 @@ module RoYT {
 
             /* Only continue if the user did not click a tab that is already selected. */
             if (!tabElementClickedByUser.classList.contains("active") && tabElementClickedByUser.tagName === "BUTTON") {
-                let tabContainer = document.getElementById("at_tabcontainer");
+                let tabContainer = document.getElementById("royt_tabcontainer");
                 let currentIndexOfNewTab = 0;
 
                 /* Iterate over the tabs to find the currently selected one and remove its selected status */
@@ -535,7 +535,7 @@ module RoYT {
             * @private
         */
         private onSubredditOverflowItemClick(eventObject: Event) {
-            let tabContainer = document.getElementById("at_tabcontainer");
+            let tabContainer = document.getElementById("royt_tabcontainer");
             let overflowItemClickedByUser = <HTMLLIElement> eventObject.target;
             let currentIndexOfNewTab = 0;
 

@@ -39,35 +39,35 @@ module RoYT {
             this.edit = edit;
 
             let template = Application.getExtensionTemplateItem(this.commentThread.commentSection.template, "commentfield");
-            this.representedHTMLElement = <HTMLDivElement> template.querySelector(".at_commentfield");
+            this.representedHTMLElement = <HTMLDivElement> template.querySelector(".royt_commentfield");
 
             /* Set the "You are now commenting as" text under the comment field. */
-            let authorName = <HTMLSpanElement> this.representedHTMLElement.querySelector(".at_writingauthor");
+            let authorName = <HTMLSpanElement> this.representedHTMLElement.querySelector(".royt_writingauthor");
             authorName.textContent = Application.localisationManager.get("commentfield_label_author", [Preferences.getString("username")]);
 
             /* Set the button text and event listener for the submit button */
-            let submitButton = <HTMLButtonElement> this.representedHTMLElement.querySelector(".at_submit");
+            let submitButton = <HTMLButtonElement> this.representedHTMLElement.querySelector(".royt_submit");
             submitButton.textContent = Application.localisationManager.get("commentfield_button_submit");
             submitButton.addEventListener("click", this.onSubmitButtonClick.bind(this), false);
 
             /* Set the button text and event listener for the cancel button */
-            let cancelButton = <HTMLButtonElement> this.representedHTMLElement.querySelector(".at_cancel");
+            let cancelButton = <HTMLButtonElement> this.representedHTMLElement.querySelector(".royt_cancel");
             cancelButton.textContent = Application.localisationManager.get("commentfield_button_cancel")
             cancelButton.addEventListener("click", this.onCancelButtonClick.bind(this), false);
 
             /* Set the text for the markdown preview header */
-            let previewHeader = <HTMLSpanElement> this.representedHTMLElement.querySelector(".at_preview_header");
+            let previewHeader = <HTMLSpanElement> this.representedHTMLElement.querySelector(".royt_preview_header");
             previewHeader.textContent = Application.localisationManager.get("commentfield_label_preview");
 
             /* Check if we were initialised with some text (most likely from the show source button) and add event listener for input
             change */
-            let inputField = <HTMLInputElement> this.representedHTMLElement.querySelector(".at_textarea");
+            let inputField = <HTMLInputElement> this.representedHTMLElement.querySelector(".royt_textarea");
             if (initialText) {
                 inputField.value = initialText;
             }
             inputField.addEventListener("input", this.onInputFieldChange.bind(this), false);
 
-            this.previewElement = <HTMLDivElement> this.representedHTMLElement.querySelector(".at_comment_preview");
+            this.previewElement = <HTMLDivElement> this.representedHTMLElement.querySelector(".royt_comment_preview");
 
             this.parentHTMLElement.appendChild(this.representedHTMLElement);
         }
@@ -89,7 +89,7 @@ module RoYT {
             let submitButton = <HTMLButtonElement> eventObject.target;
             submitButton.disabled = true;
 
-            let inputField = <HTMLInputElement> this.representedHTMLElement.querySelector(".at_textarea");
+            let inputField = <HTMLInputElement> this.representedHTMLElement.querySelector(".royt_textarea");
             let thing_id = (this.parentClass instanceof CommentThread)
                 ? this.parentClass.threadInformation.name : this.parentClass.commentObject.name;
 
@@ -97,7 +97,7 @@ module RoYT {
                 /* Send the edit comment request to reddit */
                 new RoYT.Reddit.EditCommentRequest(thing_id, inputField.value, function (responseText) {
                     this.parentClass.commentObject.body = inputField.value;
-                    let editedCommentBody = this.parentClass.representedHTMLElement.querySelector(".at_commentcontent");
+                    let editedCommentBody = this.parentClass.representedHTMLElement.querySelector(".royt_commentcontent");
                     editedCommentBody.innerHTML = SnuOwnd.getParser().render(inputField.value);
                     this.parentClass.representedHTMLElement.classList.add("edited");
 
@@ -117,7 +117,7 @@ module RoYT {
                         this.parentClass.threadContainer.appendChild(comment.representedHTMLElement);
                         new CommentField(this.parentClass);
                     } else {
-                        this.parentClass.representedHTMLElement.querySelector(".at_replies").appendChild(comment.representedHTMLElement);
+                        this.parentClass.representedHTMLElement.querySelector(".royt_replies").appendChild(comment.representedHTMLElement);
                     }
                     this.parentClass.children.push(comment);
 
@@ -149,7 +149,7 @@ module RoYT {
             /* If there is any contents of the input box, display the markdown preview and populate it. */
             if (inputField.value.length > 0) {
                 this.previewElement.style.display = "block";
-                let previewContents = <HTMLDivElement> this.previewElement.querySelector(".at_preview_contents");
+                let previewContents = <HTMLDivElement> this.previewElement.querySelector(".royt_preview_contents");
                 previewContents.innerHTML = SnuOwnd.getParser().render(inputField.value);
             } else {
                 this.previewElement.style.display = "none";

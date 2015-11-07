@@ -25,12 +25,12 @@ module RoYT {
             this.representedHTMLElement = Application.getExtensionTemplateItem(commentThread.commentSection.template, "loadmore");
 
             /* Display the amount of replies available to load */
-            let replyCount = this.representedHTMLElement.querySelector(".at_replycount");
+            let replyCount = this.representedHTMLElement.querySelector(".royt_replycount");
             let replyCountText = data.count > 1 ? Application.localisationManager.get("post_label_reply_plural") : Application.localisationManager.get("post_label_reply");
             replyCount.textContent = "(" + data.count + " " + replyCountText + ")";
 
             /* Set the localisation for the "load more" button, and the event listener. */
-            let loadMoreText = this.representedHTMLElement.querySelector(".at_load");
+            let loadMoreText = this.representedHTMLElement.querySelector(".royt_load");
             loadMoreText.textContent = Application.localisationManager.get("post_button_load_more");
             loadMoreText.addEventListener("click", this.onLoadMoreClick.bind(this), false);
         }

@@ -27,18 +27,14 @@
 /// <reference path="typings/firefox/firefox.d.ts" />
 
 "use strict";
-function at_initialise() {
+function royt_initialise() {
     if (window.top === window) {
-        if (window.location.host === "royt.co") {
-            document.body.classList.add("installed");
-        } else {
-            new RoYT.Application();
-        }
+        new RoYT.Application();
     }
 }
 
 if (document.readyState === "complete" || document.readyState === "interactive") {
-    at_initialise();
+    royt_initialise();
 } else {
-    document.addEventListener("DOMContentLoaded", at_initialise, false);
+    document.addEventListener("DOMContentLoaded", royt_initialise, false);
 }

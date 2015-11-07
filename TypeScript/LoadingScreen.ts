@@ -37,8 +37,8 @@ module RoYT {
          */
         public updateProgress(state: LoadingState, alternativeText?: string) {
             this.currentProgressState = state;
-            var loadingText = <HTMLParagraphElement> this.representedHTMLElement.querySelector("#at_loadingtext");
-            var loadingHeader = <HTMLParagraphElement> this.representedHTMLElement.querySelector("#at_loadingheader");
+            var loadingText = <HTMLParagraphElement> this.representedHTMLElement.querySelector("#royt_loadingtext");
+            var loadingHeader = <HTMLParagraphElement> this.representedHTMLElement.querySelector("#royt_loadingheader");
 
             switch (this.currentProgressState) {
                 case LoadingState.LOADING:

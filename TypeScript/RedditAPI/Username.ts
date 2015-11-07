@@ -17,7 +17,7 @@ module RoYT.Reddit {
                 Preferences.set("username", responseData.data.name);
 
                 /* If possible we should set the username retroactively so the user doesn't need to reload the page */
-                let usernameField = document.querySelector(".at_writingauthor");
+                let usernameField = document.querySelector(".royt_writingauthor");
                 if (usernameField) {
                     usernameField.textContent = Application.localisationManager.get("commentfield_label_author", [Preferences.getString("username")]);
                 }

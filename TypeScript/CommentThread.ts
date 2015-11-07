@@ -38,7 +38,7 @@ module RoYT {
             this.postIsInPreservedMode = Utilities.isRedditPreservedPost(this.threadInformation);
 
             let template = Application.getExtensionTemplateItem(this.commentSection.template, "threadcontainer");
-            this.threadContainer = <HTMLDivElement> template.querySelector("#at_comments");
+            this.threadContainer = <HTMLDivElement> template.querySelector("#royt_comments");
 
             if (threadData[0].data.modhash.length > 0) {
                 this.commentSection.userIsSignedIn = true;
@@ -58,7 +58,7 @@ module RoYT {
             title.setAttribute("href", "http://reddit.com" + this.threadInformation.permalink);
 
             /* Set the username of the author and link to them */
-            let username = this.threadContainer.querySelector(".at_author");
+            let username = this.threadContainer.querySelector(".royt_author");
             username.textContent = this.threadInformation.author;
             username.setAttribute("href", "http://www.reddit.com/u/" + this.threadInformation.author);
             username.setAttribute("data-username", this.threadInformation.author);
@@ -69,7 +69,7 @@ module RoYT {
             }
 
             /* Add flair to the user */
-            let flair = <HTMLSpanElement> this.threadContainer.querySelector(".at_flair");
+            let flair = <HTMLSpanElement> this.threadContainer.querySelector(".royt_flair");
             if (this.threadInformation.author_flair_text) {
                 flair.textContent = this.threadInformation.author_flair_text;
             } else {
@@ -88,12 +88,12 @@ module RoYT {
 
             /* Set the gild (how many times the user has been given gold for this post) if any */
             if (this.threadInformation.gilded) {
-                let gildCountElement = this.threadContainer.querySelector(".at_gilded");
+                let gildCountElement = this.threadContainer.querySelector(".royt_gilded");
                 gildCountElement.setAttribute("data-count", this.threadInformation.gilded);
             }
 
             /* Set the the thread posted time */
-            let timestamp = this.threadContainer.querySelector(".at_timestamp");
+            let timestamp = this.threadContainer.querySelector(".royt_timestamp");
             timestamp.textContent = Application.getHumanReadableTimestamp(this.threadInformation.created_utc);
             timestamp.setAttribute("timestamp", new Date(this.threadInformation.created_utc).toISOString());
 
@@ -168,7 +168,7 @@ module RoYT {
             }
 
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
-            let googlePlusButton = <HTMLButtonElement> this.threadContainer.querySelector("#at_switchtogplus");
+            let googlePlusButton = <HTMLButtonElement> this.threadContainer.querySelector("#royt_switchtogplus");
             googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
 
             let googlePlusContainer = document.getElementById("watch-discussion");
@@ -187,7 +187,7 @@ module RoYT {
 
             /* If this post is prioritised (official) mark it as such in the header */
             if (this.threadInformation.official) {
-                let officialLabel = <HTMLSpanElement> this.threadContainer.querySelector(".at_official");
+                let officialLabel = <HTMLSpanElement> this.threadContainer.querySelector(".royt_official");
                 officialLabel.textContent = Application.localisationManager.get("post_message_official");
                 officialLabel.style.display = "inline-block";
             }
@@ -213,7 +213,7 @@ module RoYT {
         * @param contents HTML DOM node or element to use.
         */
         set(contents: Node) {
-            let oldThread = document.getElementById("at_comments");
+            let oldThread = document.getElementById("royt_comments");
             let royt = document.getElementById("royt");
             if (royt && oldThread) {
                 royt.removeChild(oldThread);
@@ -259,7 +259,7 @@ module RoYT {
             let googlePlusContainer = document.getElementById("watch-discussion");
             googlePlusContainer.style.visibility = "visible";
             googlePlusContainer.style.height = "auto";
-            let redditButton = <HTMLDivElement> document.getElementById("at_switchtoreddit");
+            let redditButton = <HTMLDivElement> document.getElementById("royt_switchtoreddit");
             redditButton.style.display = "block";
 
             /* Terrible hack to force Google+ to reload the comments by making it think the user has resized the window.
@@ -345,8 +345,8 @@ module RoYT {
          * @private
          */
         private onCommentButtonClick() {
-            let header = document.querySelector(".at_thread");
-            let previousCommentBox = header.querySelector(".at_commentfield");
+            let header = document.querySelector(".royt_thread");
+            let previousCommentBox = header.querySelector(".royt_commentfield");
             if (previousCommentBox) {
                 previousCommentBox.parentNode.removeChild(previousCommentBox);
             }

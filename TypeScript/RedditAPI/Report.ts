@@ -17,7 +17,7 @@ module RoYT.Reddit {
 
         constructor(thing: string, commentThread: CommentThread, isThread: boolean) {
             let reportTemplate = Application.getExtensionTemplateItem(commentThread.commentSection.template, "report");
-            this.reportContainer = reportTemplate.querySelector(".at_report");
+            this.reportContainer = reportTemplate.querySelector(".royt_report");
             
             /* Set localisation text for the various report reasons */
             var report_options = [
@@ -34,11 +34,11 @@ module RoYT.Reddit {
             });
 
             /* Set localisation text for the submit button */
-            let submitButton = this.reportContainer.querySelector(".at_report_submit");
+            let submitButton = this.reportContainer.querySelector(".royt_report_submit");
             submitButton.appendChild(document.createTextNode(Application.localisationManager.get("report_dialog_button_submit")));
 
             /* Set localisation text for the cancel button */
-            let cancelButton = this.reportContainer.querySelector(".at_report_cancel");
+            let cancelButton = this.reportContainer.querySelector(".royt_report_cancel");
             cancelButton.appendChild(document.createTextNode(Application.localisationManager.get("report_dialog_button_cancel")));
 
             /* Assign an event listener to all the buttons, checking if the one that is being selected is the "other" button.
@@ -85,7 +85,7 @@ module RoYT.Reddit {
                             if (threadCollection[i].name === commentThread.threadInformation.name) {
                                 threadCollection.splice(i, 1);
                                 commentThread.commentSection.clearTabsFromTabContainer();
-                                tabContainer = document.getElementById("at_tabcontainer");
+                                tabContainer = document.getElementById("royt_tabcontainer");
                                 commentThread.commentSection.insertTabsIntoDocument(tabContainer, 0);
                                 commentThread.commentSection.downloadThread(threadCollection[0]);
                                 break;
@@ -119,7 +119,7 @@ module RoYT.Reddit {
                 let parentContainer = document.querySelector("header .info");
                 parentContainer.appendChild(this.reportContainer);
             } else {
-                let commentApplication = document.querySelector(`article[data-reddit-id='${thing.substring(3)}'] .at_commentApplication`);
+                let commentApplication = document.querySelector(`article[data-reddit-id='${thing.substring(3)}'] .royt_commentApplication`);
                 commentApplication.appendChild(this.reportContainer);
             }
         }

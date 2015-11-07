@@ -19,11 +19,11 @@ module RoYT {
             this.representedHTMLElement = Application.getExtensionTemplateItem(commentSection.template, "error");
 
             let errorImage = <HTMLImageElement> this.representedHTMLElement.querySelector("img");
-            let errorHeader = <HTMLParagraphElement> this.representedHTMLElement.querySelector("#at_errorheader");
-            let errorText = <HTMLParagraphElement> this.representedHTMLElement.querySelector("#at_errortext");
+            let errorHeader = <HTMLParagraphElement> this.representedHTMLElement.querySelector("#royt_errorheader");
+            let errorText = <HTMLParagraphElement> this.representedHTMLElement.querySelector("#royt_errortext");
 
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
-            let googlePlusButton = <HTMLButtonElement> this.representedHTMLElement.querySelector("#at_switchtogplus");
+            let googlePlusButton = <HTMLButtonElement> this.representedHTMLElement.querySelector("#royt_switchtogplus");
             googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
 
             let googlePlusContainer = document.getElementById("watch-discussion");
@@ -85,7 +85,7 @@ module RoYT {
             }
 
             /* Provide a retry button which reloads RoYT completely and tries again. */
-            let retryButton = <HTMLButtonElement> this.representedHTMLElement.querySelector(".at_retry");
+            let retryButton = <HTMLButtonElement> this.representedHTMLElement.querySelector(".royt_retry");
             retryButton.textContent = Application.localisationManager.get("error_button_retry");
             retryButton.addEventListener("click", this.reload, false);
 
@@ -110,7 +110,7 @@ module RoYT {
             var googlePlusContainer = document.getElementById("watch-discussion");
             googlePlusContainer.style.visibility = "visible";
             googlePlusContainer.style.height = "auto";
-            var redditButton = <HTMLDivElement> document.getElementById("at_switchtoreddit");
+            var redditButton = <HTMLDivElement> document.getElementById("royt_switchtoreddit");
             redditButton.style.display = "block";
         }
     }
