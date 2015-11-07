@@ -1,9 +1,9 @@
 /// <reference path="index.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoYT operations.
+    * @namespace RoYT
 */
-module AlienTube {
+module RoYT {
     /**
         * A class representation and container of a single Reddit comment.
         * @class ReadMore

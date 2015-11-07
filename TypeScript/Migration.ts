@@ -1,12 +1,12 @@
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoYT operations.
+    * @namespace RoYT
 */
-module AlienTube {
+module RoYT {
     /**
         * Version migration of preferences and other necessary conversions.
         * @class Migration
-        * @param lastVersion The version of AlienTube the last time the extension was run.
+        * @param lastVersion The version of RoYT the last time the extension was run.
     */
     "use strict";
     export class Migration {
@@ -43,7 +43,7 @@ module AlienTube {
             },
             
             "2.5": function () {
-                /* In 2.5 AlienTube now uses the youtube channel ID not the display name for setting AlienTube or Google+ as default per channel.
+                /* In 2.5 RoYT now uses the youtube channel ID not the display name for setting RoYT or Google+ as default per channel.
                 We will attempt to migrate existing entries using the YouTube API  */
                 let previousDisplayActions = Preferences.getObject("channelDisplayActions");
                 if (previousDisplayActions) {
@@ -79,7 +79,7 @@ module AlienTube {
                         Preferences.set("channelDisplayActions", migratedDisplayActions);
                     }, function () {
                         /* One of the requests has failed, the transition will be discarded. We will set our last run version to the previous 
-                        version so AlienTube will attempt the migration again next time. */
+                        version so RoYT will attempt the migration again next time. */
                         Preferences.set("lastRunVersion", "2.4");
                     });
                 }

@@ -1,11 +1,11 @@
 /// <reference path="index.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoYT operations.
+    * @namespace RoYT
 */
-module AlienTube {
+module RoYT {
     /**
-        * Starts a new instance of the AlienTube comment section and adds it to DOM.
+        * Starts a new instance of the RoYT comment section and adds it to DOM.
         * @class CommentSection
         * @param currentVideoIdentifier YouTube Video query identifier.
     */
@@ -24,7 +24,7 @@ module AlienTube {
             if (currentVideoIdentifier) {
                 // Load the html5 template file from disk and wait for it to load.
                 let templateLink = document.createElement("link");
-                templateLink.id = "alientubeTemplate";
+                templateLink.id = "roytTemplate";
                 Application.getExtensionTemplates(function (templateContainer) {
                     this.template = templateContainer;
 
@@ -33,7 +33,7 @@ module AlienTube {
                     this.set(loadingScreen.HTMLElement);
                     // Open a search request to Reddit for the video identfiier
                     let videoSearchString = this.getVideoSearchString(currentVideoIdentifier);
-                    new AlienTube.Reddit.Request("https://api.reddit.com/search.json?q=" + videoSearchString, RequestType.GET, function (results) {
+                    new RoYT.Reddit.Request("https://api.reddit.com/search.json?q=" + videoSearchString, RequestType.GET, function (results) {
 
                         // There are a number of ways the Reddit API can arbitrarily explode, here are some of them.
                         if (results === {} || results.kind !== 'Listing' || results.data.children.length === 0) {
@@ -156,14 +156,14 @@ module AlienTube {
         */
         public downloadThread(threadData: any) {
             let loadingScreen = new LoadingScreen(this, LoadingState.LOADING, Application.localisationManager.get("loading_post_message"));
-            let alientubeCommentContainer = document.getElementById("at_comments");
-            while (alientubeCommentContainer.firstChild) {
-                alientubeCommentContainer.removeChild(alientubeCommentContainer.firstChild);
+            let roytCommentContainer = document.getElementById("at_comments");
+            while (roytCommentContainer.firstChild) {
+                roytCommentContainer.removeChild(roytCommentContainer.firstChild);
             }
-            alientubeCommentContainer.appendChild(loadingScreen.HTMLElement);
+            roytCommentContainer.appendChild(loadingScreen.HTMLElement);
 
             let requestUrl = `https://api.reddit.com/r/${threadData.subreddit}/comments/${threadData.id}.json?sort=${Preferences.getString("threadSortType")}`;
-            new AlienTube.Reddit.Request(requestUrl, RequestType.GET, function (responseObject) {
+            new RoYT.Reddit.Request(requestUrl, RequestType.GET, function (responseObject) {
                 // Remove previous tab from memory if preference is unchecked; will require a download on tab switch.
                 responseObject[0].data.children[0].data.official = threadData.official;
 
@@ -178,7 +178,7 @@ module AlienTube {
         */
         public set(contents: Node) {
             let redditContainer = document.createElement("section");
-            redditContainer.id = "alientube";
+            redditContainer.id = "royt";
             
             let commentsContainer;
             let serviceCommentsContainer;
@@ -190,20 +190,20 @@ module AlienTube {
                 serviceCommentsContainer = document.querySelector(".comments_hide");
             }
             
-            let previousRedditInstance = document.getElementById("alientube");
+            let previousRedditInstance = document.getElementById("royt");
             if (previousRedditInstance) {
                 commentsContainer.removeChild(previousRedditInstance);
             }
 
 
-            /* Check if Dark Mode is activated, and set AlienTube to dark mode */
+            /* Check if Dark Mode is activated, and set RoYT to dark mode */
             this.checkEnvironmentDarkModestatus(redditContainer);
             
             /* Since there is no implicit event for a css property has changed, I have set a small transition on the body background colour.
                this transition will trigger the transitionend event and we can use that to check if the background colour has changed, thereby activating dark mode. */
             document.body.addEventListener("transitionend", function (e : TransitionEvent) {
                 if (e.propertyName === "background-color" && e.srcElement.tagName === "BODY") {
-                    this.checkEnvironmentDarkModestatus(document.getElementById("alientube"));
+                    this.checkEnvironmentDarkModestatus(document.getElementById("royt"));
                 }
             }, false);
 
@@ -226,7 +226,7 @@ module AlienTube {
                 }
             }
             
-            /* Set the setting for whether or not AlienTube should show itself on this YouTube channel */
+            /* Set the setting for whether or not RoYT should show itself on this YouTube channel */
             let allowOnChannelContainer = document.getElementById("allowOnChannelContainer");
             if (!allowOnChannelContainer) {
                 let actionsContainer;
@@ -238,12 +238,12 @@ module AlienTube {
                 let allowOnChannel = Application.getExtensionTemplateItem(this.template, "allowonchannel");
                 allowOnChannel.children[0].appendChild(document.createTextNode(Application.localisationManager.get("options_label_showReddit")));
                 let allowOnChannelCheckbox = allowOnChannel.querySelector("#allowonchannel");
-                allowOnChannelCheckbox.checked = (this.getDisplayActionForCurrentChannel() === "alientube");
+                allowOnChannelCheckbox.checked = (this.getDisplayActionForCurrentChannel() === "royt");
                 allowOnChannelCheckbox.addEventListener("change", this.allowOnChannelChange, false);
                 actionsContainer.appendChild(allowOnChannel);
             }
 
-            /* Add AlienTube contents */
+            /* Add RoYT contents */
             redditContainer.setAttribute("service", Service[Application.currentMediaService()]);
             redditContainer.appendChild(contents);
             commentsContainer.appendChild(redditContainer);
@@ -410,7 +410,7 @@ module AlienTube {
             if (Preferences.getBoolean("showGooglePlusWhenNoPosts") && googlePlusContainer) {
                 googlePlusContainer.style.visibility = "visible";
             googlePlusContainer.style.height = "auto";
-                document.getElementById("alientube").style.display = "none";
+                document.getElementById("royt").style.display = "none";
 
                 let redditButton = <HTMLDivElement> document.getElementById("at_switchtoreddit");
                 if (redditButton) {
@@ -428,8 +428,8 @@ module AlienTube {
             let googlePlusContainer = document.getElementById("watch-discussion");
             googlePlusContainer.style.visibility = "collapse";
             googlePlusContainer.style.height = "0";
-            let alienTubeContainer = document.getElementById("alientube");
-            alienTubeContainer.style.display = "block";
+            let roytContainer = document.getElementById("royt");
+            roytContainer.style.display = "block";
             let redditButton = <HTMLDivElement> document.getElementById("at_switchtoreddit");
             redditButton.style.display = "none";
         }
@@ -440,8 +440,8 @@ module AlienTube {
             * @private
          */
         private onGooglePlusClick(eventObject: Event) {
-            let alienTubeContainer = document.getElementById("alientube");
-            alienTubeContainer.style.display = "none";
+            let roytContainer = document.getElementById("royt");
+            roytContainer.style.display = "none";
             let googlePlusContainer = document.getElementById("watch-discussion");
             googlePlusContainer.style.visibility = "visible";
             googlePlusContainer.style.height = "auto";
@@ -571,7 +571,7 @@ module AlienTube {
             let allowedOnChannel = (<HTMLInputElement>eventObject.target).checked;
             let channelId = document.querySelector("meta[itemprop='channelId']").getAttribute("content");
             let channelDisplayActions = Preferences.getObject("channelDisplayActions");
-            channelDisplayActions[channelId] = allowedOnChannel ? "alientube" : "gplus";
+            channelDisplayActions[channelId] = allowedOnChannel ? "royt" : "gplus";
             Preferences.set("channelDisplayActions", channelDisplayActions);
         }
         
@@ -615,11 +615,11 @@ module AlienTube {
         }
         
         /**
-         * Check whether the website is currently using a "dark mode" plugin, and change AlienTube's style to comply.
-         * @param alienTubeContainer DOM node of an AlienTube section element to apply the style to.
+         * Check whether the website is currently using a "dark mode" plugin, and change RoYT's style to comply.
+         * @param roytContainer DOM node of an RoYT section element to apply the style to.
          * @private
          */
-        private checkEnvironmentDarkModestatus(alientubeContainer : any) {
+        private checkEnvironmentDarkModestatus(roytContainer : any) {
             let bodyBackgroundColour = window.getComputedStyle(document.body, null).getPropertyValue('background-color');
             let bodyBackgroundColourArray = bodyBackgroundColour.substring(4, bodyBackgroundColour.length - 1).replace(/ /g, '').split(',');
             let bodyBackgroundColourAverage = 0;
@@ -628,9 +628,9 @@ module AlienTube {
             }
             bodyBackgroundColourAverage = bodyBackgroundColourAverage / 3;
             if (bodyBackgroundColourAverage < 100) {
-                alientubeContainer.classList.add("darkmode");
+                roytContainer.classList.add("darkmode");
             } else {
-                alientubeContainer.classList.remove("darkmode");
+                roytContainer.classList.remove("darkmode");
             }
         }
         

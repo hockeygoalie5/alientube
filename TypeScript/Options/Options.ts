@@ -2,14 +2,13 @@
 /// <reference path="../Preferences.ts" />
 /// <reference path="../APIKeys.ts" />
 /// <reference path="../Migration.ts" />
-/// <reference path="Safari.ts" />
 
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoYT operations.
+    * @namespace RoYT
 */
 "use strict";
-module AlienTube {
+module RoYT {
     /**
      * The extension ptions page for all browsers.
      * @class Options
@@ -114,7 +113,7 @@ module AlienTube {
                     this.resetButtonElement.addEventListener("click", this.resetSettings, false);
                     
                     /* Set the localised text for the "default display action" dropdown options. */
-                    this.defaultDisplayActionElement.options[0].textContent = this.localisationManager.get("options_label_alientube");
+                    this.defaultDisplayActionElement.options[0].textContent = this.localisationManager.get("options_label_royt");
                     this.defaultDisplayActionElement.options[1].textContent = this.localisationManager.get("options_label_gplus");
 
                     this.excludedSubreddits = Preferences.getArray("excludedSubredditsSelectedByUser");
@@ -171,7 +170,7 @@ module AlienTube {
          */
         private resetSettings() {
             Preferences.reset();
-            new AlienTube.Options();
+            new RoYT.Options();
             Preferences.set("lastRunVersion", Options.getExtensionVersionNumber());
         }
         
@@ -286,23 +285,15 @@ module AlienTube {
         private static getExtensionVersionNumber(): string {
             let version = "";
             switch (Utilities.getCurrentBrowser()) {
-                case Browser.CHROME:
-                    version = chrome.app.getDetails().version;
-                    break;
-
                 case Browser.FIREFOX:
                     version = self.options.version;
-                    break;
-                    
-                case Browser.SAFARI:
-                    version = safari.extension.displayVersion;
                     break;
             }
             return version || "";
         }
     }
 
-    interface AlienTubePreferenceKeys {
+    interface RoYTPreferenceKeys {
         hiddenPostScoreThreshold: number;
         hiddenCommentScoreThreshold: number;
         showGooglePlusWhenNoPosts: boolean;
@@ -311,4 +302,4 @@ module AlienTube {
     }
 }
 
-new AlienTube.Options();
+new RoYT.Options();

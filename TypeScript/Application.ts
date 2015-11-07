@@ -1,11 +1,11 @@
 /// <reference path="index.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoYT operations.
+    * @namespace RoYT
 */
-module AlienTube {
+module RoYT {
     /**
-        Application class for AlienTube
+        Application class for RoYT
         @class Application
     */
     "use strict";
@@ -29,14 +29,6 @@ module AlienTube {
             // Load language files. 
             Application.localisationManager = new LocalisationManager(function () {
                 // Load stylesheet
-                if (Application.getCurrentBrowser() === Browser.SAFARI) {
-                    new HttpRequest(Application.getExtensionRessourcePath("style.css"), RequestType.GET, function (data) {
-                        var stylesheet = document.createElement("style");
-                        stylesheet.setAttribute("type", "text/css");
-                        stylesheet.textContent = data;
-                        document.head.appendChild(stylesheet);
-                    });
-                }
                 
                 if (Application.currentMediaService() === Service.YouTube) {
                     // Start observer to detect when a new video is loaded.
@@ -155,16 +147,12 @@ module AlienTube {
         }
 
         /**
-        * Get the path to a ressource in the AlienTube folder.
+        * Get the path to a ressource in the RoYT folder.
         * @param path Filename to the ressource.
         * @returns Ressource path (file://)
         */
         public static getExtensionRessourcePath(path: string): string {
             switch (Application.getCurrentBrowser()) {
-                case Browser.SAFARI:
-                    return safari.extension.baseURI + 'res/' + path;
-                case Browser.CHROME:
-                    return chrome.extension.getURL('res/' + path);
                 case Browser.FIREFOX:
                     return self.options.ressources[path];
                 default:
@@ -187,31 +175,6 @@ module AlienTube {
                         callback(template);
                     }
                     break;
-
-                case Browser.SAFARI:
-                    new HttpRequest(Application.getExtensionRessourcePath("templates.html"), RequestType.GET, function (data) {
-                        let template = document.createElement("div");
-                        let handlebarHTML = Handlebars.compile(data);
-                        template.innerHTML = handlebarHTML();
-    
-                        if (callback) {
-                            callback(template);
-                        }
-                    }.bind(this), null, null);
-                    break;
-
-                case Browser.CHROME:
-                    let templateLink = document.createElement("link");
-                    templateLink.id = "alientubeTemplate";
-                    templateLink.onload = function () {
-                        if (callback) {
-                            callback(templateLink.import);
-                        }
-                    }.bind(this);
-                    templateLink.setAttribute("rel", "import");
-                    templateLink.setAttribute("href", Application.getExtensionRessourcePath("templates.html"));
-                    document.head.appendChild(templateLink);
-                    break;
             }
         }
         
@@ -222,16 +185,8 @@ module AlienTube {
         public static version(): string {
             let version = "";
             switch (Application.getCurrentBrowser()) {
-                case Browser.CHROME:
-                    version = chrome.runtime.getManifest()["version"];
-                    break;
-
                 case Browser.FIREFOX:
                     version = self.options.version;
-                    break;
-                    
-                case Browser.SAFARI:
-                    version = safari.extension.displayVersion;
                     break;
             }
             return version;
@@ -245,19 +200,13 @@ module AlienTube {
          */
         public static getExtensionTemplateItem(templateCollection: any, id: string) {
             switch (Application.getCurrentBrowser()) {
-                case Browser.CHROME:
-                    return templateCollection.getElementById(id).content.cloneNode(true);
-                    
                 case Browser.FIREFOX:
-                    return templateCollection.querySelector("#" + id).content.cloneNode(true);
-                    
-                case Browser.SAFARI:
                     return templateCollection.querySelector("#" + id).content.cloneNode(true);
             }
         }
         
         /**
-         * Get the current media website that AlienTube is on
+         * Get the current media website that RoYT is on
          * @returns A "Service" enum value representing a media service.
          */
         public static currentMediaService() : Service {
@@ -271,13 +220,11 @@ module AlienTube {
         }
         
         /**
-         * Retrieve the current browser that AlienTube is running on.
+         * Retrieve the current browser that RoYT is running on.
          * @returns A "Browser" enum value representing a web browser.
          */
         static getCurrentBrowser() {
-            if (typeof (chrome) !== 'undefined') return Browser.CHROME;
-            else if (typeof (self.on) !== 'undefined') return Browser.FIREFOX;
-            else if (typeof (safari) !== 'undefined') return Browser.SAFARI;
+			if (typeof (self.on) !== 'undefined') return Browser.FIREFOX;
             else {
                 throw "Invalid Browser";
             }

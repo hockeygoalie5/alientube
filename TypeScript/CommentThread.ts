@@ -1,9 +1,9 @@
 /// <reference path="index.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoYT operations.
+    * @namespace RoYT
 */
-module AlienTube {
+module RoYT {
     /**
         * Creates a new instance of a Comment Thread and adds it to DOM.
         * @class CommentThread
@@ -43,7 +43,7 @@ module AlienTube {
             if (threadData[0].data.modhash.length > 0) {
                 this.commentSection.userIsSignedIn = true;
                 if (!threadData[0].data.modhash ||  !Preferences.getString("username")) {
-                    new AlienTube.Reddit.RetreiveUsernameRequest();
+                    new RoYT.Reddit.RetreiveUsernameRequest();
                 }
             } else {
                 this.commentSection.userIsSignedIn = false;
@@ -214,11 +214,11 @@ module AlienTube {
         */
         set(contents: Node) {
             let oldThread = document.getElementById("at_comments");
-            let alientube = document.getElementById("alientube");
-            if (alientube && oldThread) {
-                alientube.removeChild(oldThread);
+            let royt = document.getElementById("royt");
+            if (royt && oldThread) {
+                royt.removeChild(oldThread);
             }
-            alientube.appendChild(contents);
+            royt.appendChild(contents);
         }
     	
         /**
@@ -228,9 +228,9 @@ module AlienTube {
          */
         private onSaveButtonClick(eventObject: Event) {
             let saveButton = <HTMLSpanElement> eventObject.target;
-            let savedType = saveButton.getAttribute("saved") ? AlienTube.Reddit.SaveType.UNSAVE : AlienTube.Reddit.SaveType.SAVE;
-            new AlienTube.Reddit.SaveRequest(this.threadInformation.name, savedType, function () {
-                if (savedType === AlienTube.Reddit.SaveType.SAVE) {
+            let savedType = saveButton.getAttribute("saved") ? RoYT.Reddit.SaveType.UNSAVE : RoYT.Reddit.SaveType.SAVE;
+            new RoYT.Reddit.SaveRequest(this.threadInformation.name, savedType, function () {
+                if (savedType === RoYT.Reddit.SaveType.SAVE) {
                     saveButton.setAttribute("saved", "true");
                     saveButton.textContent = Application.localisationManager.get("post_button_unsave");
                 } else {
@@ -246,7 +246,7 @@ module AlienTube {
          * @private
          */
         private onReportButtonClicked(eventObject: Event) {
-            new AlienTube.Reddit.Report(this.threadInformation.name, this, true);
+            new RoYT.Reddit.Report(this.threadInformation.name, this, true);
         }
     	
         /**
@@ -254,8 +254,8 @@ module AlienTube {
          * @private
          */
         private onGooglePlusClick(eventObject: Event) {
-            let alienTubeContainer = document.getElementById("alientube");
-            alienTubeContainer.style.display = "none";
+            let roytContainer = document.getElementById("royt");
+            roytContainer.style.display = "none";
             let googlePlusContainer = document.getElementById("watch-discussion");
             googlePlusContainer.style.visibility = "visible";
             googlePlusContainer.style.height = "auto";
@@ -287,7 +287,7 @@ module AlienTube {
                 this.threadInformation.score = this.threadInformation.score - 1;
                 scoreValue.textContent = this.threadInformation.score;
 
-                new AlienTube.Reddit.VoteRequest(this.threadInformation.name, AlienTube.Reddit.Vote.REMOVE);
+                new RoYT.Reddit.VoteRequest(this.threadInformation.name, RoYT.Reddit.Vote.REMOVE);
             } else {
                 /* The user wishes to like this post */
                 if (this.threadInformation.likes === false) {
@@ -301,7 +301,7 @@ module AlienTube {
                 this.threadInformation.likes = true;
                 scoreValue.textContent = this.threadInformation.score;
 
-                new AlienTube.Reddit.VoteRequest(this.threadInformation.name, AlienTube.Reddit.Vote.UPVOTE);
+                new RoYT.Reddit.VoteRequest(this.threadInformation.name, RoYT.Reddit.Vote.UPVOTE);
             }
         }
         
@@ -322,7 +322,7 @@ module AlienTube {
                 this.threadInformation.score = this.threadInformation.score + 1;
                 scoreValue.textContent = this.threadInformation.score;
 
-                new AlienTube.Reddit.VoteRequest(this.threadInformation.name, AlienTube.Reddit.Vote.REMOVE);
+                new RoYT.Reddit.VoteRequest(this.threadInformation.name, RoYT.Reddit.Vote.REMOVE);
             } else {
                 /* The user wishes to dislike this post */
                 if (this.threadInformation.likes === true) {
@@ -336,7 +336,7 @@ module AlienTube {
                 this.threadInformation.likes = false;
                 scoreValue.textContent = this.threadInformation.score;
 
-                new AlienTube.Reddit.VoteRequest(this.threadInformation.name, AlienTube.Reddit.Vote.DOWNVOTE);
+                new RoYT.Reddit.VoteRequest(this.threadInformation.name, RoYT.Reddit.Vote.DOWNVOTE);
             }
         }
     	

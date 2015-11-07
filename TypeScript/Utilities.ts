@@ -1,12 +1,10 @@
-/// <reference path="typings/chrome/chrome.d.ts" />
 /// <reference path="typings/firefox/firefox.d.ts" />
-/// <reference path="typings/safari/safari.d.ts" />
 
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoYT operations.
+    * @namespace RoYT
 */
-module AlienTube {
+module RoYT {
     "use strict";
     export class Utilities {
         
@@ -45,9 +43,7 @@ module AlienTube {
         }
         
         static getCurrentBrowser() {
-            if (typeof (chrome) !== 'undefined') return Browser.CHROME;
-            else if (typeof (self.on) !== 'undefined') return Browser.FIREFOX;
-            else if (typeof (safari) !== 'undefined') return Browser.SAFARI;
+            if (typeof (self.on) !== 'undefined') return Browser.FIREFOX;
             else {
                 throw "Invalid Browser";
             }
@@ -56,7 +52,5 @@ module AlienTube {
 }
 
 enum Browser {
-    CHROME,
     FIREFOX,
-    SAFARI
 }

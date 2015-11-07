@@ -1,11 +1,11 @@
 /// <reference path="index.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoYT operations.
+    * @namespace RoYT
 */
-module AlienTube {
+module RoYT {
     /**
-        * The representation and management of an AlienTube loading screen.
+        * The representation and management of an RoYT loading screen.
         * @class LoadingScreen
         * @param commentSection The active CommentSection to retrieve data from.
         * @param insertionPoint The DOM element in which the loading screen should be appended to as a child.

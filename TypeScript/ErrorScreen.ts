@@ -1,11 +1,11 @@
 /// <reference path="index.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoYT operations.
+    * @namespace RoYT
 */
-module AlienTube {
+module RoYT {
     /**
-        * The representation and management of an AlienTube loading screen.
+        * The representation and management of an RoYT loading screen.
         * @class ErrorScreen
         * @param commentSection The active CommentSection to retrieve data from.
         * @param errorState The error state of the error screen, defines what visuals and titles will be displayed.
@@ -84,7 +84,7 @@ module AlienTube {
                     break;
             }
 
-            /* Provide a retry button which reloads AlienTube completely and tries again. */
+            /* Provide a retry button which reloads RoYT completely and tries again. */
             let retryButton = <HTMLButtonElement> this.representedHTMLElement.querySelector(".at_retry");
             retryButton.textContent = Application.localisationManager.get("error_button_retry");
             retryButton.addEventListener("click", this.reload, false);
@@ -105,8 +105,8 @@ module AlienTube {
          * @private
          */
         private onGooglePlusClick(eventObject: Event) {
-            var alienTubeContainer = document.getElementById("alientube");
-            alienTubeContainer.style.display = "none";
+            var roytContainer = document.getElementById("royt");
+            roytContainer.style.display = "none";
             var googlePlusContainer = document.getElementById("watch-discussion");
             googlePlusContainer.style.visibility = "visible";
             googlePlusContainer.style.height = "auto";

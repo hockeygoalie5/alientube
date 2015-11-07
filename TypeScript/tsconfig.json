@@ -35,11 +35,9 @@
         "./RedditAPI/Vote.ts",
         "./Utilities.ts",
         "./index.ts",
-        "./typings/chrome/chrome.d.ts",
         "./typings/firefox/firefox.d.ts",
         "./typings/handlebars.d.ts",
         "./typings/he.d.ts",
-        "./typings/safari/safari.d.ts",
         "./typings/snuownd.d.ts"
     ]
 }

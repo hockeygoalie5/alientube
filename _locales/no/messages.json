@@ -1,6 +1,6 @@
 {
   "api_header_message": {
-    "message": "Hello Reddit! This request was made by the AlienTube Browser Extension (http://alientube.co/) If you have noticed unusual or overloading traffic here, you can contact the developer at alex@sorlie.co.uk",
+    "message": "Hello Reddit! This request was made by the Reddit on Youtube Browser Extension. If you have noticed unusual or overloading traffic here, you can contact the developer at me@mkalash.com",
     "description": "Message that is sent with every request to Reddit so they can identify our requests and potentially contact us should any issues arise"
   },
   "timestamp_format_year": {
@@ -245,11 +245,11 @@
   },
   "loading_search_message": {
     "message": "Søker etter Reddit innlegg ..",
-    "description": "Message indicating that AlienTube is currently searching for Reddit posts that have linked to this video"
+    "description": "Message indicating that Reddit on Youtube is currently searching for Reddit posts that have linked to this video"
   },
   "loading_post_message": {
     "message": "Laster innlegg ..",
-    "description": "Message indicating that AlienTube is loading a specific post from Reddit"
+    "description": "Message indicating that Reddit on Youtube is loading a specific post from Reddit"
   },
   "loading_slow_message": {
     "message": "Dette tar lengre tid enn vanlig ..",
@@ -349,7 +349,7 @@
   },
   "options_label_defaultDisplayAction": {
     "message": "Vis kommentarer fra denne tjenesten først:",
-    "description": "This option will set whether AlienTube or Google+ is shown by default."
+    "description": "This option will set whether Reddit on Youtube or Google+ is shown by default."
   },
   "options_label_version": {
     "message": "versjon",
@@ -375,12 +375,12 @@
     "message": "Google+",
     "description": "Google+ option for the default display option"
   },
-  "options_label_alientube": {
+  "options_label_royt": {
     "message": "Reddit",
-    "description": "AlienTube option for the default display option"
+    "description": "Reddit on Youtube option for the default display option"
   },
   "options_label_showReddit": {
         "message": "Vis Reddit kommentarer på denne profilen",
-        "description": "AlienTube option on wheter to show Reddit comments by default on this channel"
+        "description": "Reddit on Youtube option on wheter to show Reddit comments by default on this channel"
     }
 }

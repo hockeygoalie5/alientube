@@ -27,7 +27,7 @@ preferences.keys("extensions." + addonid).forEach(function(key) {
 });
 
 pageMod.PageMod({
-    include: ["https://www.youtube.com/*", "http://www.youtube.com/*", "http://alientube.co/"],
+    include: ["https://www.youtube.com/*", "http://www.youtube.com/*", "http://royt.co/"],
     contentScriptOptions : contentScriptData,
     contentStyleFile: [
         data.url('style.css')

@@ -1,9 +1,9 @@
 /// <reference path="../index.ts" />
 /**
     * Namespace for requests to the Reddit API operations.
-    * @namespace AlienTube.Reddit
+    * @namespace RoYT.Reddit
 */
-module AlienTube.Reddit {
+module RoYT.Reddit {
     /**
         Perform a request to Reddit to edit an existing comment.
         @class EditCommentRequest

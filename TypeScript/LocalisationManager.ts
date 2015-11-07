@@ -1,10 +1,10 @@
 /// <reference path="Utilities.ts" />
 /// <reference path="HttpRequest.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoYT operations.
+    * @namespace RoYT
 */
-module AlienTube {
+module RoYT {
     /**
         * Starts a new instance of the Localisation Manager, for handling language.
         * @class LocalisationManager
@@ -23,20 +23,6 @@ module AlienTube {
 
         constructor(callback?) {
             switch (Utilities.getCurrentBrowser()) {
-                case Browser.SAFARI:
-                    let localisation = navigator.language.split('-')[0];
-                    if (this.supportedLocalisations.indexOf(localisation) === -1) {
-                        localisation = "en";
-                    }
-                    
-                    new HttpRequest(`${safari.extension.baseURI}_locales/${localisation}/messages.json`, RequestType.GET, function (data)  {
-                        this.localisationData = JSON.parse(data);
-                        if (callback) {
-                            requestAnimationFrame(callback);
-                        }
-                    }.bind(this));
-                    break;
-
                 case Browser.FIREFOX:
                     this.localisationData = JSON.parse(self.options.localisation);
                     if (callback) {
@@ -60,15 +46,6 @@ module AlienTube {
         */
         public get(key: string, placeholders?: Array<string>) {
             switch (Utilities.getCurrentBrowser()) {
-                case Browser.CHROME:
-                    if (placeholders) {
-                        return chrome.i18n.getMessage(key, placeholders);
-                    } else {
-                        return chrome.i18n.getMessage(key);
-                    }
-                    break;
-
-                case Browser.SAFARI:
                 case Browser.FIREFOX:
                     if (placeholders) {
                         let localisationItem = this.localisationData[key];
