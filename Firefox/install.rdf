@@ -5,7 +5,7 @@
           <em:type>2</em:type>
           <em:bootstrap>true</em:bootstrap>
           <em:unpack>false</em:unpack>
-          <em:version>2.6.0</em:version>
+          <em:version>1.0.0</em:version>
           <em:name>Reddit on Youtube</em:name>
           <em:description>Adds Reddit comments to Youtube videos!</em:description>
           <em:creator>mkalash</em:creator>
