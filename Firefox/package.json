@@ -1,10 +1,10 @@
 {
-    "name": "alientube",
-    "fullName": "AlienTube",
-    "title": "AlienTube",
-    "id": "jid1-0GRQcsmyXNQRlg@jetpack",
-    "description": "Reddit comments, in your YouTube!",
-    "author": "Delexious",
+    "name": "royt",
+    "fullName": "Reddit on Youtube",
+    "title": "Reddit on Youtube",
+    "id": "15f28b3a-c42b-463c-907a-e69d0eb2988a@jetpack",
+    "description": "Adds Reddit comments to Youtube videos!",
+    "author": "mkalash",
     "license": "BSD 3",
     "version": "2.6.0",
     "main": "lib/main.js",
@@ -16,7 +16,7 @@
     "preferences": [
         {
             "type": "control",
-            "label": "Open AlienTube Preferences",
+            "label": "Open RoYT Preferences",
             "name": "openPreferences",
             "title": "Click here to open preferences"
         }
