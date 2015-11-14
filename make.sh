@@ -29,104 +29,25 @@ printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' \#
 echo
 
 echo ${standout}Removing old files${normal}
-echo Removing TypeScript mapping folders.
-rm -rf Firefox/data/TypeScript
-
-echo Removing TypeScript code-mapping file.
-rm -f Firefox/data/script.js.map
-rm -f lib/script.js.map
-rm -f lib/script-es5.js.map
-
-echo Removing options page TypeScript code-mapping file.
-rm -f Firefox/data/options.js.map
-rm -f lib/options.js.map
-rm -f lib/options-es5.js.map
-
 echo Removing SASS stylesheet code-mapping file.
-rm -f Firefox/data/style.css.map
+rm -f data/style.css.map
+echo Removing royt.xpi
+rm -f royt.xpi
 echo
 echo
 
 echo ${standout}Compiling SASS style files.${normal}
 echo Compiling Main SASS stylesheet.
-sass res/style.scss res/style.css
+sass data/style.scss data/style.css
 echo Compiling Options SASS stylesheet
-sass res/options.scss res/options.css
+sass data/options.scss data/options.css
 echo
 echo
 
-echo ${standout}Copying static browser resources${normal}
-echo Copying Firefox Resources
-mkdir -pv Firefox/data
-cp -fr res/redditbroken.svg Firefox/data
-cp -fr res/redditoverload.svg Firefox/data
-cp -fr res/redditblocked.svg Firefox/data
-cp -fr res/icon128.png Firefox/data
-cp -fr res/options.css Firefox/data
-cp -fr lib/snuownd.js Firefox/data
-cp -fr lib/handlebars-v3.0.3.js Firefox/data
+echo ${standout}Creating royt.xpi${normal}
+7z a -y royt.xpi data bootstrap.js icon.png install.rdf LICENSE.md package.json
 echo
 echo
-
-echo ${standout}Updating Options HTML Page${normal}
-cp -vf options.html Firefox/data/options.html
-echo
-echo
-
-echo ${standout}Compiling TypeScript Files.${normal}
-if [ "$1" == "--debug" ]; then
-    echo Compiling Options page TypeScript in ES5 compatibility mode without comments with source map.
-    tsc --target ES5 --out lib/options-es5.js TypeScript/typings/es5-compatibility.ts TypeScript/Options/Options.ts --removeComments --sourcemap
-    echo Compiling Application TypeScript in ES5 compatibility mode without comments with source map.
-    tsc --target ES5 --out lib/script-es5.js TypeScript/typings/es5-compatibility.ts TypeScript/index.ts --removeComments --sourcemap
-    
-    echo Compiling Options page TypeScript file without comments with source map.
-    tsc --target ES6 --out lib/options.js TypeScript/Options/Options.ts --removeComments --sourcemap
-    echo Compiling Application TypeScript file without comments with source map.
-    tsc --target ES6 --out lib/script.js TypeScript/index.ts --removeComments --sourcemap
-else
-    echo Compiling Options page TypeScript in ES5 compatibility mode with comments.
-    tsc --target ES5 --out lib/options-es5.js TypeScript/typings/es5-compatibility.ts TypeScript/Options/Options.ts
-    echo Compiling Application page TypeScript in ES5 compatibility mode with comments.
-    tsc --target ES5 --out lib/script-es5.js TypeScript/typings/es5-compatibility.ts TypeScript/index.ts
-    
-    echo Compiling Options page TypeScript file with comments.
-    tsc --target ES6 --out lib/options.js TypeScript/Options/Options.ts
-    echo Compiling Application page TypeScript file with comments.
-    tsc --target ES6 --out lib/script.js TypeScript/index.ts
-fi
-echo
-echo Copying TypeScript Files
-cp -vf lib/options-es5.js Firefox/data/options.js
-cp -vf lib/script-es5.js Firefox/data/script.js
-echo
-echo
-
-echo ${standout}Copying Style Files${normal}
-cp -vf res/style.css Firefox/data/style.css
-echo
-
-echo ${standout}Copying Template Files${normal}
-cp -vf res/templates.html Firefox/data/templates.html
-echo
-echo
-
-if [ "$1" == "--debug" ]; then
-    echo ${standout}Copying Development Sourcemaps${normal}
-    cp -vf lib/script.js.map Firefox/data/script.js.map
-    cp -vf lib/options.js.map Firefox/data/options.js.map
-    echo 
-    cp -vf res/style.css.map Firefox/data/style.css.map
-    echo 
-    echo Copying TypeScript source folders.
-    cp -fr TypeScript Firefox/data/TypeScript
-    echo
-    echo
-fi
-
-echo ${standout}Copying Localisation Files${normal}
-echo Copying localisation files to Firefox
-rsync -a --exclude=".*" _locales Firefox/data/
 
 if [ "$1" == "--debug" ] && [[ "$OSTYPE" == "darwin"* ]]; then
     echo ${standout}Reloading Development Browsers${normal}
