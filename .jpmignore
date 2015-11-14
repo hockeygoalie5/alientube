@@ -1,0 +1,13 @@
+make.sh
+
+*.xpi
+
+.git/
+.gitignore
+
+.settings/
+.project
+
+.jpmignore
+
+.sass-cache/

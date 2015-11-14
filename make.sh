@@ -31,8 +31,8 @@ echo
 echo ${standout}Removing old files${normal}
 echo Removing SASS stylesheet code-mapping file.
 rm -f data/style.css.map
-echo Removing royt.xpi
-rm -f royt.xpi
+echo Removing XPI files.
+rm -f *.xpi
 echo
 echo
 
@@ -45,7 +45,7 @@ echo
 echo
 
 echo ${standout}Creating royt.xpi${normal}
-7z a -y royt.xpi data bootstrap.js icon.png install.rdf LICENSE.md package.json
+jpm xpi
 echo
 echo
 

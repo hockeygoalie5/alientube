@@ -4,4 +4,4 @@
 *.map
 *.xpi
 
-.sass-cache/*
+.sass-cache/
