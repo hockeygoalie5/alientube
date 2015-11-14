@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+    <Description about="urn:mozilla:install-manifest">
+          <em:id>15f28b3a-c42b-463c-907a-e69d0eb2988a@jetpack</em:id>
+          <em:type>2</em:type>
+          <em:bootstrap>true</em:bootstrap>
+          <em:unpack>false</em:unpack>
+          <em:version>1.0.0</em:version>
+          <em:name>Reddit on Youtube</em:name>
+          <em:description>Adds Reddit comments to Youtube videos!</em:description>
+          <em:creator>mkalash</em:creator>
+          <em:optionsURL>data:text/xml,&lt;placeholder/&gt;</em:optionsURL>
+          <em:optionsType>2</em:optionsType>
+
+          <em:targetApplication>
+            <Description>
+              <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+              <em:minVersion>38.0a1</em:minVersion>
+              <em:maxVersion>39.0</em:maxVersion>
+</Description>
+</em:targetApplication>
+
+
+    </Description>
+
+</RDF>
