@@ -8,7 +8,6 @@ var tabs = require("sdk/tabs");
 var locale = require("sdk/l10n/core").locale || "en";
 var addonid = require('sdk/self').id;
 
-
 var contentScriptData = {
     ressources: {
         "redditbroken.svg" : data.url("redditbroken.svg"),

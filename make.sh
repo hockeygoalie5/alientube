@@ -31,8 +31,10 @@ echo
 echo ${standout}Removing old files${normal}
 echo Removing SASS stylesheet code-mapping file.
 rm -f data/style.css.map
-echo Removing XPI files.
+echo Removing old addon versions.
 rm -f *.xpi
+rm -f install.rdf
+rm -f bootstrap.js
 echo
 echo
 

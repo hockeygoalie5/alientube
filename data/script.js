@@ -1,5 +1,44 @@
-/// <reference path="es6-promise.d.ts" /> 
-/// <reference path="index.ts" />
+/**
+ * parseHTML Parses a string of HTML into a DOM element and removes body, style, script, head, title, and iframe tags.
+ * @param aString The HTML string to parse.
+ */
+//function parseHTML(aString) {
+//	var parser = new DOMParser();
+//	var element = parser.parseFromString(aString, "text/html").body;
+//	
+//	var bodies = element.getElementsByTagName('body');
+//	for(var i = 0, ii = bodies.length; i < ii; i++) {
+//		bodies(i).parentNode.removeChild(bodies[i]);
+//	}
+//	
+//	var styles = element.getElementsByTagName('style');
+//	for(var i = 0, ii = bodies.length; i < ii; i++) {
+//		styles(i).parentNode.removeChild(styles[i]);
+//	}
+//	
+//	var heads = element.getElementsByTagName('head');
+//	for(var i = 0, ii = bodies.length; i < ii; i++) {
+//		heads(i).parentNode.removeChild(heads[i]);
+//	}
+//	
+//	var scripts = element.getElementsByTagName('script');
+//	for(var i = 0, ii = bodies.length; i < ii; i++) {
+//		scripts(i).parentNode.removeChild(scripts[i]);
+//	}
+//	
+//	var titles = element.getElementsByTagName('title');
+//	for(var i = 0, ii = bodies.length; i < ii; i++) {
+//		titles(i).parentNode.removeChild(titles[i]);
+//	}
+//	
+//	var iframes = element.getElementsByTagName('iframe');
+//	for(var i = 0, ii = bodies.length; i < ii; i++) {
+//		iframes(i).parentNode.removeChild(iframes[i]);
+//	}
+//	
+//	return element;
+//}
+
 /**
     * Namespace for All RoYT operations.
     * @namespace RoYT
@@ -142,27 +181,18 @@ var RoYT;
         * @returns Ressource path (file://)
         */
         Application.getExtensionRessourcePath = function (path) {
-            switch (Application.getCurrentBrowser()) {
-                case Browser.FIREFOX:
-                    return self.options.ressources[path];
-                default:
-                    return null;
-            }
+            return self.options.ressources[path];
         };
         /**
             * Get the HTML templates for the extension
             * @param callback A callback to be called when the extension templates has been loaded.
         */
         Application.getExtensionTemplates = function (callback) {
-            switch (Application.getCurrentBrowser()) {
-                case Browser.FIREFOX:
-                    var template = document.createElement("div");
-                    var handlebarHTML = Handlebars.compile(self.options.template);
-                    template.innerHTML = handlebarHTML();
-                    if (callback) {
-                        callback(template);
-                    }
-                    break;
+        	var template = document.createElement("div");
+            var handlebarHTML = Handlebars.compile(self.options.template);
+            template.innerHTML = handlebarHTML();
+            if (callback) {
+                callback(template);
             }
         };
         /**
@@ -170,12 +200,7 @@ var RoYT;
          * @public
          */
         Application.version = function () {
-            var version = "";
-            switch (Application.getCurrentBrowser()) {
-                case Browser.FIREFOX:
-                    version = self.options.version;
-                    break;
-            }
+            var version = self.options.version;
             return version;
         };
         /**
@@ -185,10 +210,7 @@ var RoYT;
          * @returns DOM node of a template section.
          */
         Application.getExtensionTemplateItem = function (templateCollection, id) {
-            switch (Application.getCurrentBrowser()) {
-                case Browser.FIREFOX:
-                    return templateCollection.querySelector("#" + id).content.cloneNode(true);
-            }
+            return templateCollection.querySelector("#" + id).content.cloneNode(true);
         };
         /**
          * Get the current media website that RoYT is on
@@ -202,17 +224,6 @@ var RoYT;
                 return Service.Vimeo;
             }
             return null;
-        };
-        /**
-         * Retrieve the current browser that RoYT is running on.
-         * @returns A "Browser" enum value representing a web browser.
-         */
-        Application.getCurrentBrowser = function () {
-            if (typeof (self.on) !== 'undefined')
-                return Browser.FIREFOX;
-            else {
-                throw "Invalid Browser";
-            }
         };
         return Application;
     })();
@@ -296,7 +307,6 @@ var RoYT;
     })(RoYT.RequestType || (RoYT.RequestType = {}));
     var RequestType = RoYT.RequestType;
 })(RoYT || (RoYT = {}));
-/// <reference path="typings/firefox/firefox.d.ts" />
 /**
     * Namespace for All RoYT operations.
     * @namespace RoYT
@@ -336,22 +346,10 @@ var RoYT;
                     return arg;
             }
         };
-        Utilities.getCurrentBrowser = function () {
-            if (typeof (self.on) !== 'undefined')
-                return Browser.FIREFOX;
-            else {
-                throw "Invalid Browser";
-            }
-        };
         return Utilities;
     })();
     RoYT.Utilities = Utilities;
 })(RoYT || (RoYT = {}));
-var Browser;
-(function (Browser) {
-    Browser[Browser["FIREFOX"] = 0] = "FIREFOX";
-})(Browser || (Browser = {}));
-/// <reference path="Utilities.ts" />
 /**
     * Namespace for All RoYT operations.
     * @namespace RoYT
@@ -373,14 +371,10 @@ var RoYT;
          */
         Preferences.initialise = function (callback) {
             Preferences.preferenceCache = {};
-            switch (RoYT.Utilities.getCurrentBrowser()) {
-                case Browser.FIREFOX:
-                    /* Get the Firefox preferences. */
-                    Preferences.preferenceCache = self.options.preferences;
-                    if (callback) {
-                        callback();
-                    }
-                    break;
+            /* Get the Firefox preferences. */
+            Preferences.preferenceCache = self.options.preferences;
+            if (callback) {
+                callback();
             }
         };
         /**
@@ -456,28 +450,20 @@ var RoYT;
          */
         Preferences.set = function (key, value) {
             Preferences.preferenceCache[key] = value;
-            switch (RoYT.Utilities.getCurrentBrowser()) {
-                case Browser.FIREFOX:
-                    if (typeof value === "object") {
-                        value = JSON.stringify(value);
-                    }
-                    self.port.emit("setSettingsValue", {
-                        key: key,
-                        value: value
-                    });
-                    break;
+            if (typeof value === "object") {
+                value = JSON.stringify(value);
             }
+            self.port.emit("setSettingsValue", {
+                key: key,
+                value: value
+            });
         };
         /**
          * Reset all the settings for the extension.
          */
         Preferences.reset = function () {
             Preferences.preferenceCache = {};
-            switch (RoYT.Utilities.getCurrentBrowser()) {
-                case Browser.FIREFOX:
-                    self.port.emit("eraseSettings", null);
-                    break;
-            }
+            self.port.emit("eraseSettings", null);
         };
         Object.defineProperty(Preferences, "enforcedExludedSubreddits", {
             /**
@@ -1158,10 +1144,8 @@ var RoYT;
                 RoYT.Preferences.set("username", "");
                 this.threadContainer.classList.add("signedout");
             }
-            /* Set the thread title and link to it, because Reddit for some reason encodes html entities in the title, we must use
-            innerHTML. */
             var title = this.threadContainer.querySelector(".title");
-            title.innerHTML = this.threadInformation.title;
+            title.textContent = this.threadInformation.title;
             title.setAttribute("href", "http://reddit.com" + this.threadInformation.permalink);
             /* Set the username of the author and link to them */
             var username = this.threadContainer.querySelector(".royt_author");
@@ -1522,7 +1506,7 @@ var RoYT;
                 new RoYT.Reddit.EditCommentRequest(thing_id, inputField.value, function (responseText) {
                     this.parentClass.commentObject.body = inputField.value;
                     var editedCommentBody = this.parentClass.representedHTMLElement.querySelector(".royt_commentcontent");
-                    editedCommentBody.innerHTML = SnuOwnd.getParser().render(inputField.value);
+                    editedCommentBody.textContent = SnuOwnd.getParser().render(inputField.value);
                     this.parentClass.representedHTMLElement.classList.add("edited");
                     /* The comment box is no longer needed, remove it and clear outselves out of memory */
                     this.representedHTMLElement.parentNode.removeChild(this.representedHTMLElement);
@@ -1657,8 +1641,6 @@ var RoYT;
             /* Render the markdown and set the actual comement messsage of the comment */
             var contentTextOfComment = this.representedHTMLElement.querySelector(".royt_commentcontent");
             var contentTextHolder = document.createElement("span");
-            /* Terrible workaround: Reddit text is double encoded with html entities for some reason, so we have to insert it into the DOM
-            twice to make the browser decode it. */
             var textParsingElement = document.createElement("span");
             textParsingElement.innerHTML = this.commentObject.body;
             /* Set the comment text */
@@ -1991,18 +1973,9 @@ var RoYT;
                 'es',
                 'fr'
             ];
-            switch (RoYT.Utilities.getCurrentBrowser()) {
-                case Browser.FIREFOX:
-                    this.localisationData = JSON.parse(self.options.localisation);
-                    if (callback) {
-                        requestAnimationFrame(callback);
-                    }
-                    break;
-                default:
-                    if (callback) {
-                        requestAnimationFrame(callback);
-                    }
-                    break;
+            this.localisationData = JSON.parse(self.options.localisation);
+            if (callback) {
+                requestAnimationFrame(callback);
             }
         }
         /**
@@ -2012,25 +1985,21 @@ var RoYT;
             * @returns The requested language string.
         */
         LocalisationManager.prototype.get = function (key, placeholders) {
-            switch (RoYT.Utilities.getCurrentBrowser()) {
-                case Browser.FIREFOX:
-                    if (placeholders) {
-                        var localisationItem = this.localisationData[key];
-                        if (localisationItem) {
-                            var message = localisationItem.message;
-                            for (var placeholder in localisationItem.placeholders) {
-                                if (localisationItem.placeholders.hasOwnProperty(placeholder)) {
-                                    var placeHolderArgumentIndex = parseInt(localisationItem.placeholders[placeholder].content.substring(1), 10);
-                                    message = message.replace("$" + placeholder.toUpperCase() + "$", placeholders[placeHolderArgumentIndex - 1]);
-                                }
-                            }
-                            return message;
+            if (placeholders) {
+                var localisationItem = this.localisationData[key];
+                if (localisationItem) {
+                    var message = localisationItem.message;
+                    for (var placeholder in localisationItem.placeholders) {
+                        if (localisationItem.placeholders.hasOwnProperty(placeholder)) {
+                            var placeHolderArgumentIndex = parseInt(localisationItem.placeholders[placeholder].content.substring(1), 10);
+                            message = message.replace("$" + placeholder.toUpperCase() + "$", placeholders[placeHolderArgumentIndex - 1]);
                         }
                     }
-                    else {
-                        return this.localisationData[key] ? this.localisationData[key].message : "";
-                    }
-                    break;
+                    return message;
+                }
+            }
+            else {
+                return this.localisationData[key] ? this.localisationData[key].message : "";
             }
             return "";
         };

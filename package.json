@@ -7,7 +7,7 @@
     "author": "mkalash",
     "license": "BSD 3",
     "version": "1.0.0",
-    "main": "data/main.js",
+    "main": "main.js",
 
     "permissions": {
         "cross-domain-content": ["https://api.reddit.com/"]
