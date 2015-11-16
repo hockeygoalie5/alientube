@@ -1,43 +1,48 @@
 /**
- * parseHTML Parses a string of HTML into a DOM element and removes body, style, script, head, title, and iframe tags.
- * @param aString The HTML string to parse.
- */
-//function parseHTML(aString) {
-//	var parser = new DOMParser();
-//	var element = parser.parseFromString(aString, "text/html").body;
-//	
-//	var bodies = element.getElementsByTagName('body');
-//	for(var i = 0, ii = bodies.length; i < ii; i++) {
-//		bodies(i).parentNode.removeChild(bodies[i]);
-//	}
-//	
-//	var styles = element.getElementsByTagName('style');
-//	for(var i = 0, ii = bodies.length; i < ii; i++) {
-//		styles(i).parentNode.removeChild(styles[i]);
-//	}
-//	
-//	var heads = element.getElementsByTagName('head');
-//	for(var i = 0, ii = bodies.length; i < ii; i++) {
-//		heads(i).parentNode.removeChild(heads[i]);
-//	}
-//	
-//	var scripts = element.getElementsByTagName('script');
-//	for(var i = 0, ii = bodies.length; i < ii; i++) {
-//		scripts(i).parentNode.removeChild(scripts[i]);
-//	}
-//	
-//	var titles = element.getElementsByTagName('title');
-//	for(var i = 0, ii = bodies.length; i < ii; i++) {
-//		titles(i).parentNode.removeChild(titles[i]);
-//	}
-//	
-//	var iframes = element.getElementsByTagName('iframe');
-//	for(var i = 0, ii = bodies.length; i < ii; i++) {
-//		iframes(i).parentNode.removeChild(iframes[i]);
-//	}
-//	
-//	return element;
-//}
+	* parseHTML Parses a string of HTML into a DOM element and removes body, style, script, head, title, and iframe tags.
+	* @param aString The HTML string to parse.
+*/
+function parseHTML(aString) {
+	var parser = new DOMParser();
+	var element = parser.parseFromString(aString, "text/html").body;
+	  
+	var div = document.createElement("div");
+	while(element.firstChild) {
+		div.appendChild(element.firstChild);
+	}
+		
+	var bodies = div.getElementsByTagName('body');
+	for(var i = 0, ii = bodies.length; i < ii; i++) {
+		bodies[i].parentNode.removeChild(bodies[i]);
+	}
+	
+	var styles = div.getElementsByTagName('style');
+	for(var i = 0, ii = bodies.length; i < ii; i++) {
+		styles[i].parentNode.removeChild(styles[i]);
+	}
+	
+	var heads = element.getElementsByTagName('head');
+	for(var i = 0, ii = bodies.length; i < ii; i++) {
+		heads[i].parentNode.removeChild(heads[i]);
+	}
+	
+	var scripts = div.getElementsByTagName('script');
+	for(var i = 0, ii = bodies.length; i < ii; i++) {
+		scripts[i].parentNode.removeChild(scripts[i]);
+	}
+	
+	var titles = div.getElementsByTagName('title');
+	for(var i = 0, ii = bodies.length; i < ii; i++) {
+		titles[i].parentNode.removeChild(titles[i]);
+	}
+	
+	var iframes = div.getElementsByTagName('iframe');
+	for(var i = 0, ii = bodies.length; i < ii; i++) {
+		iframes[i].parentNode.removeChild(iframes[i]);
+	}
+	
+	return div;
+}
 
 /**
     * Namespace for All RoYT operations.
@@ -190,7 +195,8 @@ var RoYT;
         Application.getExtensionTemplates = function (callback) {
         	var template = document.createElement("div");
             var handlebarHTML = Handlebars.compile(self.options.template);
-            template.innerHTML = handlebarHTML();
+            // I have no idea why, but parseHTML returns empty if I don't prepend and empty div.
+            template.appendChild(parseHTML("<div></div>" + handlebarHTML()));
             if (callback) {
                 callback(template);
             }
@@ -1552,7 +1558,10 @@ var RoYT;
             if (inputField.value.length > 0) {
                 this.previewElement.style.display = "block";
                 var previewContents = this.previewElement.querySelector(".royt_preview_contents");
-                previewContents.innerHTML = SnuOwnd.getParser().render(inputField.value);
+                while(previewContents.firstChild) {
+                	previewContents.removeChild(previewContents.firstChild);
+                }
+                previewContents.appendChild(parseHTML(SnuOwnd.getParser().render(inputField.value)));
             }
             else {
                 this.previewElement.style.display = "none";
@@ -1642,9 +1651,9 @@ var RoYT;
             var contentTextOfComment = this.representedHTMLElement.querySelector(".royt_commentcontent");
             var contentTextHolder = document.createElement("span");
             var textParsingElement = document.createElement("span");
-            textParsingElement.innerHTML = this.commentObject.body;
+            textParsingElement.appendChild(parseHTML(this.commentObject.body));
             /* Set the comment text */
-            contentTextHolder.innerHTML = SnuOwnd.getParser().render(textParsingElement.textContent);
+            contentTextHolder.appendChild(parseHTML(SnuOwnd.getParser().render(textParsingElement.textContent)));
             contentTextOfComment.appendChild(contentTextHolder);
             if (this.commentObject.body === "[deleted]") {
                 this.representedHTMLElement.classList.add("deleted");
