@@ -20,11 +20,7 @@ trap 'abort' 0
 set -e
 
 echo
-if [ "$1" == "--debug" ]; then
-    echo Compiling Reddit on Youtube in ${standout}debug${normal} mode.
-else
-    echo Compiling Reddit on Youtube in ${standout}production${normal} mode.
-fi
+echo Compiling Reddit on Youtube.
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' \#
 echo
 
@@ -50,11 +46,6 @@ echo ${standout}Creating royt.xpi${normal}
 jpm xpi
 echo
 echo
-
-if [ "$1" == "--debug" ] && [[ "$OSTYPE" == "darwin"* ]]; then
-    echo ${standout}Reloading Development Browsers${normal}
-    osascript reload.scpt
-fi
 
 echo
 echo
