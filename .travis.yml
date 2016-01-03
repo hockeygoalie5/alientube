@@ -7,6 +7,7 @@ env:
     - DISPLAY=:99.0
     - JPM_FIREFOX_BINARY=/usr/local/bin/firefox
 before_install:
+  - gem install sass
   - sh -e /etc/init.d/xvfb start
 before_script:
   - npm install -g jpm
