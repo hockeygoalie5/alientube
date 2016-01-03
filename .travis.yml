@@ -11,4 +11,4 @@ before_install:
 before_script:
   - npm install -g jpm
 script:
-  - jpm test
+  - ./make.sh --debug

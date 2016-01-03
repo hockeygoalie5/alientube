@@ -20,7 +20,11 @@ trap 'abort' 0
 set -e
 
 echo
-echo Compiling Reddit on Youtube.
+if [ "$1" == "--debug" ]; then
+	echo Compiling Reddit on Youtube for ${standout}testing${normal}.
+else
+	echo Compiling Reddit on Youtube for ${standout}production${normal}.
+fi
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' \#
 echo
 
@@ -42,8 +46,13 @@ sass data/options.scss data/options.css
 echo
 echo
 
-echo ${standout}Creating royt.xpi${normal}
-jpm xpi
+if [ "$1" == "--debug" ]; then
+	echo ${standout}Running tests.${normal}
+	jpm test --verbose
+else
+	echo ${standout}Creating royt.xpi${normal}
+	jpm xpi
+fi
 echo
 echo
 
