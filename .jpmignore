@@ -11,3 +11,6 @@ make.sh
 .jpmignore
 
 .sass-cache/
+
+test/
+.travis.yml
