@@ -5,3 +5,5 @@
 *.xpi
 
 .sass-cache/
+
+testlog.txt
