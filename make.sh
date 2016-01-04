@@ -51,10 +51,9 @@ echo
 
 if [ "$1" == "--debug" ]; then
 	echo ${standout}Running tests.${normal}
-	jpm test --binary-args 'https://www.youtube.com/watch?v=gozIJFK1jVU' --tbpl > __testlog.txt
-	grep -E -v "^(TEST-INFO \| \[JavaScript Warning)|^(\"}])" __testlog.txt > testlog.txt
-	rm __testlog.txt
-	cat testlog.txt
+	jpm test --binary-args 'https://www.youtube.com/watch?v=gozIJFK1jVU' --tbpl | grep -E -v "^(TEST-INFO \| \[JavaScript Warning)|^(\"}])" | tee testlog.txt
+	grep "All tests passed\!" testlog.txt > /dev/null
+	(! grep -E "^(TEST-INFO \| \[JavaScript Error).*(15f28b3a-c42b-463c-907a-e69d0eb2988a-at-jetpack)" testlog.txt) > /dev/null
 else
 	echo ${standout}Packaging .xpi${normal}
 	jpm xpi
