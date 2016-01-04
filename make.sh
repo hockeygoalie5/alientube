@@ -31,8 +31,11 @@ echo
 echo ${standout}Removing old files${normal}
 echo Removing SASS stylesheet code-mapping file.
 rm -f data/style.css.map
-echo Removing old addon versions.
-rm -f *.xpi
+if [  "$1" != "--debug" ]; then
+	echo Removing old addon versions.
+	rm -f *.xpi
+fi
+echo Removing any old install.rdf or bootstrap.js that may have gotten out of the package.
 rm -f install.rdf
 rm -f bootstrap.js
 echo
@@ -53,7 +56,7 @@ if [ "$1" == "--debug" ]; then
 	rm __testlog.txt
 	cat testlog.txt
 else
-	echo ${standout}Creating royt.xpi${normal}
+	echo ${standout}Packaging .xpi${normal}
 	jpm xpi
 fi
 echo
