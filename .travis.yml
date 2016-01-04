@@ -15,4 +15,4 @@ before_script:
   - npm install -g jpm
 script:
   - ./make.sh --debug
-  - grep -E "^(TEST-INFO \| \[JavaScript Error)" testlog.txt
+  - (! grep -E "^(TEST-INFO \| \[JavaScript Error)" testlog.txt)
