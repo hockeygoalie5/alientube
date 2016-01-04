@@ -48,7 +48,10 @@ echo
 
 if [ "$1" == "--debug" ]; then
 	echo ${standout}Running tests.${normal}
-	jpm test --verbose
+	jpm test --binary-args 'https://www.youtube.com/watch?v=gozIJFK1jVU' --tbpl > __testlog.txt
+	grep -E -v "^(TEST-INFO \| \[JavaScript Warning)|^(\"}])" __testlog.txt > testlog.txt
+	rm __testlog.txt
+	cat testlog.txt
 else
 	echo ${standout}Creating royt.xpi${normal}
 	jpm xpi

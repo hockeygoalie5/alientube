@@ -7,6 +7,13 @@ var simplePrefs = require("sdk/simple-prefs");
 var tabs = require("sdk/tabs");
 var locale = require("sdk/l10n/core").locale || "en";
 var addonid = require('sdk/self').id;
+var pageWorker;
+
+getPageWorker = function() {
+	return pageWorker;
+}
+
+exports.getPageWorker = getPageWorker;
 
 var contentScriptData = {
     ressources: {
@@ -41,6 +48,7 @@ pageMod.PageMod({
             preferences.set("extensions." + addonid + "." + message.key, message.value);
             contentScriptData.preferences[message.key] = message.value;
         });
+        pageWorker = worker;
     }
 });
 
