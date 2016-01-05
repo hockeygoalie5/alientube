@@ -7,7 +7,7 @@ exports.testRun = function(assert, done) {
 		pageWorker = main.getPageWorker();
 		assert.ok(typeof pageWorker !== "undefined", "content script is attached");
 		done();
-	}, 5000);
+	}, 10000);
 }
 
 require("sdk/test").run(exports);
