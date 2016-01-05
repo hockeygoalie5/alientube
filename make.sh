@@ -65,7 +65,7 @@ echo
 echo
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' \#
 echo
-echo ${green}Operation completed sucessfully${normal}
+echo ${green}Operation completed successfully${normal}
 echo
 echo
 trap : 0
