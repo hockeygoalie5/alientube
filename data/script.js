@@ -1931,28 +1931,34 @@ var RoYT;
             var loadingText = eventObject.target;
             loadingText.classList.add("loading");
             loadingText.textContent = RoYT.Application.localisationManager.get("loading_generic_message");
-            var generateRequestUrl = "https://api.reddit.com/r/" + this.commentThread.threadInformation.subreddit + "\"/comments/" + this.commentThread.threadInformation.id + "/z/" + this.data.id + ".json";
-            new RoYT.HttpRequest(generateRequestUrl, RoYT.RequestType.GET, function (responseData) {
-                /* Remove "loading comments" text */
-                var getParentNode = loadingText.parentNode.parentNode;
-                getParentNode.removeChild(loadingText.parentNode);
-                /* Traverse the retrieved comments and append them to the comment section */
-                var commentItems = JSON.parse(responseData)[1].data.children;
-                if (commentItems.length > 0) {
-                    commentItems.forEach(function (commentObject) {
-                        var readmore, comment;
-                        if (commentObject.kind === "more") {
-                            readmore = new LoadMore(commentObject.data, this.referenceParent, this.commentThread);
-                            this.referenceParent.children.push(readmore);
-                            getParentNode.appendChild(readmore.representedHTMLElement);
-                        }
-                        else {
-                            comment = new RoYT.Comment(commentObject.data, this.commentThread);
-                            this.referenceParent.children.push(comment);
-                            getParentNode.appendChild(comment.representedHTMLElement);
-                        }
-                    });
-                }
+            var getParentNode = loadingText.parentNode.parentNode;
+            var that = this;
+            this.data.children.forEach(function(id) {
+                var generateRequestUrl = "https://api.reddit.com/r/" + that.commentThread.threadInformation.subreddit + "/comments/" + that.commentThread.threadInformation.id + "/z/" + id + ".json";
+                new RoYT.HttpRequest(generateRequestUrl, RoYT.RequestType.GET, function (responseData) {
+                    /* Remove "loading comments" text */
+                    if (loadingText) {
+                        getParentNode.removeChild(loadingText.parentNode);
+                        loadingText = null;
+                    }
+                    /* Traverse the retrieved comments and append them to the comment section */
+                    var commentItems = JSON.parse(responseData)[1].data.children;
+                    if (commentItems.length > 0) {
+                        commentItems.forEach(function (commentObject) {
+                            var readmore, comment;
+                            if (commentObject.kind === "more") {
+                                readmore = new LoadMore(commentObject.data, that.referenceParent, that.commentThread);
+                                that.referenceParent.children.push(readmore);
+                                getParentNode.appendChild(readmore.representedHTMLElement);
+                            }
+                            else {
+                                comment = new RoYT.Comment(commentObject.data, that.commentThread);
+                                that.referenceParent.children.push(comment);
+                                getParentNode.appendChild(comment.representedHTMLElement);
+                            }
+                        });
+                    }
+                });
             });
         };
         return LoadMore;
