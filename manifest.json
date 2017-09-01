@@ -1,0 +1,41 @@
+{
+    "name": "Reddit on Youtube",
+    "short_name": "royt",
+    "description": "Adds Reddit comments to Youtube videos!",
+    "developer": {
+      "name": "mkalash",
+      "url": "https://github.com/mustafakalash/royt"
+    },
+    "applications": {
+      "gecko": {
+        "id": "15f28b3a-c42b-463c-907a-e69d0eb2988a@jetpack",
+        "strict_min_version": "42.0"
+      }
+    },
+    "version": "2.0.0",
+    "manifest_version": 2,
+    "default_locale": "en_US",
+
+    "permissions": [
+        "https://api.reddit.com/",
+        "storage"
+    ],
+
+    "icons": {
+      "128" : "icons/icon128.png"
+    },
+
+    "options_ui": {
+      "page": "options/options.html",
+      "browser_style": false,
+      "open_in_tab": true
+    },
+
+    "content_scripts": [
+      {
+        "matches": ["*://*.youtube.com/*"],
+        "css": ["royt/style.css"],
+        "js": ["royt/snuownd.js", "royt/handlebars-v3.0.3.js", "royt/script.js"]
+      }
+    ]
+}

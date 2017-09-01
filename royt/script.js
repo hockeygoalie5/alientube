@@ -1,48 +1,4 @@
-/**
-	* parseHTML Parses a string of HTML into a DOM element and removes body, style, script, head, title, and iframe tags.
-	* @param aString The HTML string to parse.
-*/
-function parseHTML(aString) {
-	var parser = new DOMParser();
-	var element = parser.parseFromString(aString, "text/html").body;
-	  
-	var div = document.createElement("div");
-	while(element.firstChild) {
-		div.appendChild(element.firstChild);
-	}
-		
-	var bodies = div.getElementsByTagName('body');
-	for(var i = 0, ii = bodies.length; i < ii; i++) {
-		bodies[i].parentNode.removeChild(bodies[i]);
-	}
-	
-	var styles = div.getElementsByTagName('style');
-	for(var i = 0, ii = bodies.length; i < ii; i++) {
-		styles[i].parentNode.removeChild(styles[i]);
-	}
-	
-	var heads = element.getElementsByTagName('head');
-	for(var i = 0, ii = bodies.length; i < ii; i++) {
-		heads[i].parentNode.removeChild(heads[i]);
-	}
-	
-	var scripts = div.getElementsByTagName('script');
-	for(var i = 0, ii = bodies.length; i < ii; i++) {
-		scripts[i].parentNode.removeChild(scripts[i]);
-	}
-	
-	var titles = div.getElementsByTagName('title');
-	for(var i = 0, ii = bodies.length; i < ii; i++) {
-		titles[i].parentNode.removeChild(titles[i]);
-	}
-	
-	var iframes = div.getElementsByTagName('iframe');
-	for(var i = 0, ii = bodies.length; i < ii; i++) {
-		iframes[i].parentNode.removeChild(iframes[i]);
-	}
-	
-	return div;
-}
+"use strict";
 
 /**
     * Namespace for All RoYT operations.
@@ -54,39 +10,30 @@ var RoYT;
         Application class for RoYT
         @class Application
     */
-    "use strict";
+
     var Application = (function () {
         function Application() {
-            // Load preferences from disk.
-            RoYT.Preferences.initialise(function () {
-                // Check if a version migration is necessary.
-                if (RoYT.Preferences.getString("lastRunVersion") !== Application.version()) {
-                    new RoYT.Migration(RoYT.Preferences.getString("lastRunVersion"));
-                    /* Update the last run version paramater with the current version so we'll know not to run this migration again. */
-                    RoYT.Preferences.set("lastRunVersion", Application.version());
-                }
-            });
-            // Load language files. 
-            Application.localisationManager = new RoYT.LocalisationManager(function () {
-                // Load stylesheet
-                if (Application.currentMediaService() === Service.YouTube) {
-                    // Start observer to detect when a new video is loaded.
-                    var observer = new MutationObserver(this.youtubeMutationObserver);
-                    var config = { attributes: true, childList: true, characterData: true };
-                    observer.observe(document.getElementById("content"), config);
-                    // Start a new comment section.
-                    this.currentVideoIdentifier = Application.getCurrentVideoId();
-                    if (RoYT.Utilities.isVideoPage) {
-                        Application.commentSection = new RoYT.CommentSection(this.currentVideoIdentifier);
-                    }
-                }
-                else if (Application.currentMediaService() === Service.Vimeo) {
-                    // Start observer to detect when a new video is loaded.
-                    var observer = new MutationObserver(this.vimeoMutationObserver);
-                    var config = { attributes: true, childList: true, characterData: true };
-                    observer.observe(document.querySelector(".extras_wrapper"), config);
-                }
-            }.bind(this));
+					RoYT.Preferences.initialise();
+	        // Load language files.
+	        Application.localisationManager = new RoYT.LocalisationManager(function () {
+	            if (Application.currentMediaService() === Service.YouTube) {
+	                // Start observer to detect when a new video is loaded.
+	                var observer = new MutationObserver(this.youtubeMutationObserver);
+	                var config = { attributes: true, childList: true, characterData: true };
+	                observer.observe(document.getElementById("page-manager"), config);
+	                // Start a new comment section.
+	                this.currentVideoIdentifier = Application.getCurrentVideoId();
+	                if (RoYT.Utilities.isVideoPage) {
+	                    Application.commentSection = new RoYT.CommentSection(this.currentVideoIdentifier);
+	                }
+	            }
+	            else if (Application.currentMediaService() === Service.Vimeo) {
+	                // Start observer to detect when a new video is loaded.
+	                var observer = new MutationObserver(this.vimeoMutationObserver);
+	                var config = { attributes: true, childList: true, characterData: true };
+	                observer.observe(document.querySelector(".extras_wrapper"), config);
+	            }
+	        }.bind(this));
         }
         /**
             * Mutation Observer for monitoring for whenver the user changes to a new "page" on YouTube
@@ -96,7 +43,7 @@ var RoYT;
         Application.prototype.youtubeMutationObserver = function (mutations) {
             mutations.forEach(function (mutation) {
                 var target = mutation.target;
-                if (target.classList.contains("yt-card") || target.id === "content") {
+                if (target.id === "page-manager") {
                     var reportedVideoId = Application.getCurrentVideoId();
                     if (reportedVideoId !== this.currentVideoIdentifier) {
                         this.currentVideoIdentifier = reportedVideoId;
@@ -183,30 +130,38 @@ var RoYT;
         /**
         * Get the path to a ressource in the RoYT folder.
         * @param path Filename to the ressource.
-        * @returns Ressource path (file://)
+        * @returns Ressource path (moz-extension://)
         */
         Application.getExtensionRessourcePath = function (path) {
-            return self.options.ressources[path];
+            return browser.extension.getURL(path);
         };
         /**
             * Get the HTML templates for the extension
             * @param callback A callback to be called when the extension templates has been loaded.
         */
         Application.getExtensionTemplates = function (callback) {
-        	var template = document.createElement("div");
-            var handlebarHTML = Handlebars.compile(self.options.template);
-            // I have no idea why, but parseHTML returns empty if I don't prepend and empty div.
-            template.appendChild(parseHTML("<div></div>" + handlebarHTML()));
-            if (callback) {
-                callback(template);
-            }
+					var xobj = new XMLHttpRequest();
+				  xobj.overrideMimeType("text/html");
+				  xobj.open("GET", Application.getExtensionRessourcePath("/royt/templates.html"), true);
+				  xobj.onreadystatechange = function() {
+						if (xobj.readyState == 4 && xobj.status == "200") {
+		        	var template = document.createElement("div");
+		          var handlebarHTML = Handlebars.compile(xobj.responseText);
+		          // I have no idea why, but parseHTML returns empty if I don't prepend and empty div.
+		          template.appendChild(RoYT.Utilities.parseHTML("<div></div>" + handlebarHTML()));
+		          if (callback) {
+		          	callback(template);
+		          }
+						}
+					};
+					xobj.send(null);
         };
         /**
          * Get the current version of the extension.
          * @public
          */
         Application.version = function () {
-            var version = self.options.version;
+            var version = browser.runtime.getManifest().version;
             return version;
         };
         /**
@@ -234,18 +189,7 @@ var RoYT;
         return Application;
     })();
     RoYT.Application = Application;
-})(RoYT || (RoYT = {}));
-var Service;
-(function (Service) {
-    Service[Service["YouTube"] = 0] = "YouTube";
-    Service[Service["Vimeo"] = 1] = "Vimeo";
-})(Service || (Service = {}));
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         * HttpRequest interface across Browsers.
         * @class HttpRequest
@@ -254,7 +198,6 @@ var RoYT;
         * @param callback Callback handler for the event when loaded.
         * @param [postdata] Key-Value object containing POST data.
     */
-    "use strict";
     var HttpRequest = (function () {
         function HttpRequest(url, type, callback, postData, errorHandler) {
             var xhr = new XMLHttpRequest();
@@ -312,14 +255,7 @@ var RoYT;
         RequestType[RequestType["POST"] = 1] = "POST";
     })(RoYT.RequestType || (RoYT.RequestType = {}));
     var RequestType = RoYT.RequestType;
-})(RoYT || (RoYT = {}));
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
-    "use strict";
+
     var Utilities = (function () {
         function Utilities() {
         }
@@ -339,7 +275,7 @@ var RoYT;
             Determine whether the current url of the tab is a YouTube video page.
         */
         Utilities.isVideoPage = function () {
-            return (window.location.pathname === "watch" || document.querySelector("meta[og:type]").getAttribute("content") === "video");
+            return (window.location.pathname === "/watch" || document.querySelector("meta[og:type]").getAttribute("content") === "video");
         };
         Utilities.parseBoolean = function (arg) {
             switch (typeof (arg)) {
@@ -348,25 +284,68 @@ var RoYT;
                     break;
                 case "number":
                     return arg > 0;
+										break;
                 default:
                     return arg;
             }
         };
+
+				/**
+					* parseHTML Parses a string of HTML into a DOM element and removes body, style, script, head, title, and iframe tags.
+					* @param aString The HTML string to parse.
+					* @returns div Element containing nodes parsed from aString
+				*/
+				Utilities.parseHTML = function(aString){
+					var parser = new DOMParser();
+					var element = parser.parseFromString(aString, "text/html").body;
+
+					var div = document.createElement("div");
+					while(element.firstChild) {
+						div.appendChild(element.firstChild);
+					}
+
+					var bodies = div.getElementsByTagName('body');
+					for(var i = 0, ii = bodies.length; i < ii; i++) {
+						bodies[i].parentNode.removeChild(bodies[i]);
+					}
+
+					var styles = div.getElementsByTagName('style');
+					for(var i = 0, ii = bodies.length; i < ii; i++) {
+						styles[i].parentNode.removeChild(styles[i]);
+					}
+
+					var heads = element.getElementsByTagName('head');
+					for(var i = 0, ii = bodies.length; i < ii; i++) {
+						heads[i].parentNode.removeChild(heads[i]);
+					}
+
+					var scripts = div.getElementsByTagName('script');
+					for(var i = 0, ii = bodies.length; i < ii; i++) {
+						scripts[i].parentNode.removeChild(scripts[i]);
+					}
+
+					var titles = div.getElementsByTagName('title');
+					for(var i = 0, ii = bodies.length; i < ii; i++) {
+						titles[i].parentNode.removeChild(titles[i]);
+					}
+
+					var iframes = div.getElementsByTagName('iframe');
+					for(var i = 0, ii = bodies.length; i < ii; i++) {
+						iframes[i].parentNode.removeChild(iframes[i]);
+					}
+
+					return div;
+				};
+
         return Utilities;
     })();
     RoYT.Utilities = Utilities;
-})(RoYT || (RoYT = {}));
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         * Manages the Preferences across browsers.
         * @class Preferences
     */
-    "use strict";
+
     var Preferences = (function () {
         function Preferences() {
         }
@@ -375,13 +354,42 @@ var RoYT;
          * @param [callback] Callback for when the preferences has been loaded.
          * @constructor
          */
-        Preferences.initialise = function (callback) {
-            Preferences.preferenceCache = {};
-            /* Get the Firefox preferences. */
-            Preferences.preferenceCache = self.options.preferences;
-            if (callback) {
-                callback();
-            }
+        Preferences.initialise = function () {
+					Preferences.preferenceCache = {
+						"hiddenPostScoreThreshold": -1,
+						"hiddenCommentScoreThreshold": -1,
+						"defaultDisplayAction": "royt",
+						"channelDisplayActions": "{}",
+						"showGooglePlusWhenNoPosts": false,
+						"showGooglePlusButton": false,
+						"excludedSubredditsSelectedByUser": "[]",
+						"threadSortType": "confidence",
+						"redditUserIdentifierHash": ""
+					};
+
+					function onError(error) {
+						console.error('${error}');
+					}
+
+					function loadCache(result) {
+						Preferences.preferenceCache["hiddenPostScoreThreshold"] = result.hiddenPostScoreThreshold || -1;
+						Preferences.preferenceCache["hiddenCommentScoreThreshold"] = result.hiddenCommentScoreThreshold || -1;
+
+						Preferences.preferenceCache["defaultDisplayAction"] = result.defaultDisplayAction || "royt";
+						Preferences.preferenceCache["channelDisplayActions"] = result.channelDisplayActions || "{}";
+
+						Preferences.preferenceCache["showGooglePlusWhenNoPosts"] = result.showGooglePlusWhenNoPosts || false;
+						Preferences.preferenceCache["showGooglePlusButton"] = result.showGooglePlusButton || false;
+
+						Preferences.preferenceCache["excludedSubredditsSelectedByUser"] = result.excludedSubreddits || "[]";
+
+						Preferences.preferenceCache["threadSortType"] = result.threadSortType || "confidence";
+
+						Preferences.preferenceCache["redditUserIdentifierHash"] = result.redditUserIdentifierHash || "";
+					}
+
+					var getting = browser.storage.sync.get(null);
+					getting.then(loadCache, onError);
         };
         /**
          * Retrieve a value from preferences, or the default value for that key.
@@ -392,10 +400,7 @@ var RoYT;
          * @see getString getNumber getBoolean getArray getObject
          */
         Preferences.get = function (key) {
-            if (Preferences.preferenceCache[key] !== null && typeof (Preferences.preferenceCache[key]) !== 'undefined') {
-                return Preferences.preferenceCache[key];
-            }
-            return this.defaults[key];
+        	return Preferences.preferenceCache[key];
         };
         /**
          * Retreive a string from preferences, or the default string value for that key.
@@ -459,68 +464,18 @@ var RoYT;
             if (typeof value === "object") {
                 value = JSON.stringify(value);
             }
-            self.port.emit("setSettingsValue", {
-                key: key,
-                value: value
-            });
-        };
-        /**
-         * Reset all the settings for the extension.
-         */
-        Preferences.reset = function () {
-            Preferences.preferenceCache = {};
-            self.port.emit("eraseSettings", null);
-        };
-        Object.defineProperty(Preferences, "enforcedExludedSubreddits", {
-            /**
-             * Get a list of subreddits that will not be displayed by RoYT, either because they are not meant to show up in searches (bot accunulation subreddits) or because they are deemed too unsettling.
-             * @returns An array list of subreddit names as strings.
-             */
-            get: function () {
-                return [
-                    "theredpill",
-                    "redpillwomen",
-                    "whiterights",
-                    "whiterightsuk",
-                    "northwestfront",
-                    "gdnews",
-                    "polistan",
-                    "retardedcripples",
-                    "arandabottest"
-                ];
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Preferences.defaults = {
-            hiddenPostScoreThreshold: -4,
-            hiddenCommentScoreThreshold: -4,
-            showGooglePlusWhenNoPosts: true,
-            showGooglePlusButton: true,
-            threadSortType: "confidence",
-            redditUserIdentifierHash: "",
-            excludedSubredditsSelectedByUser: [],
-            displayGooglePlusByDefault: false,
-            defaultDisplayAction: "royt",
-            channelDisplayActions: {}
+						browser.storage.sync.set({key: value});
         };
         return Preferences;
     })();
     RoYT.Preferences = Preferences;
-})(RoYT || (RoYT = {}));
-/// <reference path="index.ts" />
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         * Starts a new instance of the RoYT comment section and adds it to DOM.
         * @class CommentSection
         * @param currentVideoIdentifier YouTube Video query identifier.
     */
-    "use strict";
+
     var CommentSection = (function () {
         function CommentSection(currentVideoIdentifier) {
             this.threadCollection = new Array();
@@ -534,7 +489,7 @@ var RoYT;
                     this.template = templateContainer;
                     // Set Loading Screen
                     var loadingScreen = new RoYT.LoadingScreen(this, RoYT.LoadingState.LOADING, RoYT.Application.localisationManager.get("loading_search_message"));
-                    this.set(loadingScreen.HTMLElement);
+										this.set(loadingScreen.HTMLElement);
                     // Open a search request to Reddit for the video identfiier
                     var videoSearchString = this.getVideoSearchString(currentVideoIdentifier);
                     new RoYT.Reddit.Request("https://api.reddit.com/search.json?q=" + videoSearchString, RoYT.RequestType.GET, function (results) {
@@ -574,7 +529,7 @@ var RoYT;
                                     }
                                 }
                                 // Sort threads into array groups by what subreddit they are in.
-                                var getExcludedSubreddits = RoYT.Preferences.enforcedExludedSubreddits.concat(RoYT.Preferences.getArray("excludedSubredditsSelectedByUser"));
+                                var getExcludedSubreddits = RoYT.Preferences.getArray("excludedSubredditsSelectedByUser");
                                 var sortedResultCollection = {};
                                 finalResultCollection.forEach(function (thread) {
                                     if (getExcludedSubreddits.indexOf(thread.subreddit.toLowerCase()) !== -1)
@@ -674,12 +629,12 @@ var RoYT;
             var commentsContainer;
             var serviceCommentsContainer;
             if (RoYT.Application.currentMediaService() === Service.YouTube) {
-                commentsContainer = document.getElementById("watch7-content");
-                serviceCommentsContainer = document.getElementById("watch-discussion");
+							commentsContainer = document.getElementById("comments");
+							serviceCommentsContainer = document.querySelector("ytd-item-section-renderer.style-scope");
             }
             else if (RoYT.Application.currentMediaService() === Service.Vimeo) {
-                commentsContainer = document.querySelector(".comments_container");
-                serviceCommentsContainer = document.querySelector(".comments_hide");
+              commentsContainer = document.querySelector(".comments_container");
+              serviceCommentsContainer = document.querySelector(".comments_hide");
             }
             var previousRedditInstance = document.getElementById("royt");
             if (previousRedditInstance) {
@@ -704,12 +659,11 @@ var RoYT;
                     serviceCommentsContainer.parentNode.insertBefore(redditButton, serviceCommentsContainer);
                 }
                 if (this.getDisplayActionForCurrentChannel() === "gplus") {
-                    redditContainer.style.display = "none";
-                    redditButton.style.display = "block";
-                }
-                else {
-                    serviceCommentsContainer.style.visibility = "collapse";
-                    serviceCommentsContainer.style.height = "0";
+                  redditContainer.style.display = "none";
+                  redditButton.style.display = "block";
+                } else {
+                  serviceCommentsContainer.style.visibility = "collapse";
+                  serviceCommentsContainer.style.height = "0";
                 }
             }
             /* Set the setting for whether or not RoYT should show itself on this YouTube channel */
@@ -717,7 +671,7 @@ var RoYT;
             if (!allowOnChannelContainer) {
                 var actionsContainer;
                 if (RoYT.Application.currentMediaService() === Service.YouTube) {
-                    actionsContainer = document.getElementById("watch7-user-header");
+									actionsContainer = document.getElementById("owner-container");
                 }
                 else if (RoYT.Application.currentMediaService() === Service.Vimeo) {
                     actionsContainer = document.querySelector(".video_meta .byline");
@@ -795,7 +749,7 @@ var RoYT;
             var len = this.threadCollection.length;
             var maxWidth;
             if (RoYT.Application.currentMediaService() === Service.YouTube) {
-                maxWidth = document.getElementById("watch7-content").offsetWidth - 80;
+                maxWidth = document.getElementById("comments").offsetWidth - 80;
             }
             else if (RoYT.Application.currentMediaService() === Service.Vimeo) {
                 maxWidth = document.getElementById("comments").offsetWidth - 80;
@@ -876,7 +830,7 @@ var RoYT;
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
             var googlePlusButton = template.querySelector("#royt_switchtogplus");
             googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-            var googlePlusContainer = document.getElementById("watch-discussion");
+            var googlePlusContainer = document.getElementById("ytd-item-section-renderer.style-scope");
             if (RoYT.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
             }
@@ -897,7 +851,7 @@ var RoYT;
          * @private
          */
         CommentSection.prototype.onRedditClick = function (eventObject) {
-            var googlePlusContainer = document.getElementById("watch-discussion");
+            var googlePlusContainer = document.getElementById("ytd-item-section-renderer.style-scope");
             googlePlusContainer.style.visibility = "collapse";
             googlePlusContainer.style.height = "0";
             var roytContainer = document.getElementById("royt");
@@ -913,7 +867,7 @@ var RoYT;
         CommentSection.prototype.onGooglePlusClick = function (eventObject) {
             var roytContainer = document.getElementById("royt");
             roytContainer.style.display = "none";
-            var googlePlusContainer = document.getElementById("watch-discussion");
+            var googlePlusContainer = document.getElementById("ytd-item-section-renderer.style-scope");
             googlePlusContainer.style.visibility = "visible";
             googlePlusContainer.style.height = "auto";
             var redditButton = document.getElementById("royt_switchtoreddit");
@@ -1038,7 +992,7 @@ var RoYT;
         CommentSection.prototype.getDisplayActionForCurrentChannel = function () {
             var channelId;
             if (RoYT.Application.currentMediaService() === Service.YouTube) {
-                channelId = document.querySelector("meta[itemprop='channelId']").getAttribute("content");
+								channelId = document.getElementById("owner-name").firstChild.innerText;
             }
             else if (RoYT.Application.currentMediaService() === Service.Vimeo) {
                 channelId = document.querySelector("a[rel='author']").getAttribute("href").substring(1);
@@ -1106,21 +1060,13 @@ var RoYT;
         return CommentSection;
     })();
     RoYT.CommentSection = CommentSection;
-})(RoYT || (RoYT = {}));
-/// <reference path="index.ts" />
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         * Creates a new instance of a Comment Thread and adds it to DOM.
         * @class CommentThread
         * @param threadData JavaScript object containing all information about the Reddit thread.
         * @param commentSection The comment section object the thread exists within.
     */
-    "use strict";
     var CommentThread = (function () {
         function CommentThread(threadData, commentSection) {
             this.sortingTypes = [
@@ -1253,7 +1199,7 @@ var RoYT;
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
             var googlePlusButton = this.threadContainer.querySelector("#royt_switchtogplus");
             googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-            var googlePlusContainer = document.getElementById("watch-discussion");
+            var googlePlusContainer = document.getElementById("ytd-item-section-renderer.style-scope");
             if (RoYT.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
             }
@@ -1333,7 +1279,7 @@ var RoYT;
         CommentThread.prototype.onGooglePlusClick = function (eventObject) {
             var roytContainer = document.getElementById("royt");
             roytContainer.style.display = "none";
-            var googlePlusContainer = document.getElementById("watch-discussion");
+            var googlePlusContainer = document.getElementById("ytd-item-section-renderer.style-scope");
             googlePlusContainer.style.visibility = "visible";
             googlePlusContainer.style.height = "auto";
             var redditButton = document.getElementById("royt_switchtoreddit");
@@ -1426,14 +1372,7 @@ var RoYT;
         return CommentThread;
     })();
     RoYT.CommentThread = CommentThread;
-})(RoYT || (RoYT = {}));
-/// <reference path="index.ts" />
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         * The representation and management of an RoYT loading screen.
         * @class CommentField
@@ -1441,7 +1380,7 @@ var RoYT;
         * @param insertionPoint The DOM element in which the loading screen should be appended to as a child.
         * @param [initialState] An optional initial state for the loading screen, the default is "Loading"
     */
-    "use strict";
+
     var CommentField = (function () {
         function CommentField(parent, initialText, edit) {
             /* Check if the paramter is a Coment Thread and assign the correct parent HTML element .*/
@@ -1561,7 +1500,7 @@ var RoYT;
                 while(previewContents.firstChild) {
                 	previewContents.removeChild(previewContents.firstChild);
                 }
-                previewContents.appendChild(parseHTML(SnuOwnd.getParser().render(inputField.value)));
+                previewContents.appendChild(RoYT.Utilities.parseHTML(SnuOwnd.getParser().render(inputField.value)));
             }
             else {
                 this.previewElement.style.display = "none";
@@ -1570,21 +1509,13 @@ var RoYT;
         return CommentField;
     })();
     RoYT.CommentField = CommentField;
-})(RoYT || (RoYT = {}));
-/// <reference path="index.ts" />
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         * A class representation and container of a single Reddit comment.
         * @class Comment
         * @param commentData Object containing the comment data from the Reddit API.
         * @param commentThread CommentThread object representing the container of the comment.
     */
-    "use strict";
     var Comment = (function () {
         function Comment(commentData, commentThread) {
             this.children = new Array();
@@ -1651,9 +1582,9 @@ var RoYT;
             var contentTextOfComment = this.representedHTMLElement.querySelector(".royt_commentcontent");
             var contentTextHolder = document.createElement("span");
             var textParsingElement = document.createElement("span");
-            textParsingElement.appendChild(parseHTML(this.commentObject.body));
+            textParsingElement.appendChild(RoYT.Utilities.parseHTML(this.commentObject.body));
             /* Set the comment text */
-            contentTextHolder.appendChild(parseHTML(SnuOwnd.getParser().render(textParsingElement.textContent)));
+            contentTextHolder.appendChild(RoYT.Utilities.parseHTML(SnuOwnd.getParser().render(textParsingElement.textContent)));
             contentTextOfComment.appendChild(contentTextHolder);
             if (this.commentObject.body === "[deleted]") {
                 this.representedHTMLElement.classList.add("deleted");
@@ -1891,21 +1822,14 @@ var RoYT;
         return Comment;
     })();
     RoYT.Comment = Comment;
-})(RoYT || (RoYT = {}));
-/// <reference path="index.ts" />
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         * A class representation and container of a single Reddit comment.
         * @class ReadMore
         * @param data Object containing the "load more comments" links.
         * @param commentThread CommentThread object representing the container of the load more link.
     */
-    "use strict";
+
     var LoadMore = (function () {
         function LoadMore(data, referenceParent, commentThread) {
             this.data = data;
@@ -1931,58 +1855,47 @@ var RoYT;
             var loadingText = eventObject.target;
             loadingText.classList.add("loading");
             loadingText.textContent = RoYT.Application.localisationManager.get("loading_generic_message");
-            var generateRequestUrl = "https://api.reddit.com/r/" + this.commentThread.threadInformation.subreddit + "\"/comments/" + this.commentThread.threadInformation.id + "/z/" + this.data.id + ".json";
-            new RoYT.HttpRequest(generateRequestUrl, RoYT.RequestType.GET, function (responseData) {
-                /* Remove "loading comments" text */
-                var getParentNode = loadingText.parentNode.parentNode;
-                getParentNode.removeChild(loadingText.parentNode);
-                /* Traverse the retrieved comments and append them to the comment section */
-                var commentItems = JSON.parse(responseData)[1].data.children;
-                if (commentItems.length > 0) {
-                    commentItems.forEach(function (commentObject) {
-                        var readmore, comment;
-                        if (commentObject.kind === "more") {
-                            readmore = new LoadMore(commentObject.data, this.referenceParent, this.commentThread);
-                            this.referenceParent.children.push(readmore);
-                            getParentNode.appendChild(readmore.representedHTMLElement);
-                        }
-                        else {
-                            comment = new RoYT.Comment(commentObject.data, this.commentThread);
-                            this.referenceParent.children.push(comment);
-                            getParentNode.appendChild(comment.representedHTMLElement);
-                        }
-                    });
-                }
+						var getParentNode = loadingText.parentNode.parentNode;
+            var that = this;
+            this.data.children.forEach(function(id) {
+                var generateRequestUrl = "https://api.reddit.com/r/" + that.commentThread.threadInformation.subreddit + "/comments/" + that.commentThread.threadInformation.id + "/z/" + id + ".json";
+                new RoYT.HttpRequest(generateRequestUrl, RoYT.RequestType.GET, function (responseData) {
+                  /* Remove "loading comments" text */
+                  if (loadingText) {
+                      getParentNode.removeChild(loadingText.parentNode);
+                      loadingText = null;
+                  }
+                  /* Traverse the retrieved comments and append them to the comment section */
+                  var commentItems = JSON.parse(responseData)[1].data.children;
+                  if (commentItems.length > 0) {
+                      commentItems.forEach(function (commentObject) {
+                          var readmore, comment;
+                          if (commentObject.kind === "more") {
+                              readmore = new LoadMore(commentObject.data, that.referenceParent, that.commentThread);
+                              that.referenceParent.children.push(readmore);
+                              getParentNode.appendChild(readmore.representedHTMLElement);
+                          }
+                          else {
+                              comment = new RoYT.Comment(commentObject.data, that.commentThread);
+                              that.referenceParent.children.push(comment);
+                              getParentNode.appendChild(comment.representedHTMLElement);
+                          }
+                      });
+                    }
+								});
             });
         };
         return LoadMore;
     })();
     RoYT.LoadMore = LoadMore;
-})(RoYT || (RoYT = {}));
-/// <reference path="Utilities.ts" />
-/// <reference path="HttpRequest.ts" />
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         * Starts a new instance of the Localisation Manager, for handling language.
         * @class LocalisationManager
         * @param [callback] a callback method to be called after the localisation files has been loaded.
     */
-    "use strict";
     var LocalisationManager = (function () {
         function LocalisationManager(callback) {
-            this.supportedLocalisations = [
-                'en',
-                'en-US',
-                'no',
-                'es',
-                'fr'
-            ];
-            this.localisationData = JSON.parse(self.options.localisation);
             if (callback) {
                 requestAnimationFrame(callback);
             }
@@ -1995,22 +1908,10 @@ var RoYT;
         */
         LocalisationManager.prototype.get = function (key, placeholders) {
             if (placeholders) {
-                var localisationItem = this.localisationData[key];
-                if (localisationItem) {
-                    var message = localisationItem.message;
-                    for (var placeholder in localisationItem.placeholders) {
-                        if (localisationItem.placeholders.hasOwnProperty(placeholder)) {
-                            var placeHolderArgumentIndex = parseInt(localisationItem.placeholders[placeholder].content.substring(1), 10);
-                            message = message.replace("$" + placeholder.toUpperCase() + "$", placeholders[placeHolderArgumentIndex - 1]);
-                        }
-                    }
-                    return message;
-                }
+							return browser.i18n.getMessage(key, placeholders);
+            } else {
+              return browser.i18n.getMessage(key);
             }
-            else {
-                return this.localisationData[key] ? this.localisationData[key].message : "";
-            }
-            return "";
         };
         /**
          * Retreive a localised string related to a number of items, localising plurality by language.
@@ -2021,22 +1922,14 @@ var RoYT;
         LocalisationManager.prototype.getWithLocalisedPluralisation = function (key, value) {
             if (value > 1 || value === 0) {
                 return this.get(key + "_plural");
-            }
-            else {
+            } else {
                 return this.get(key);
             }
         };
         return LocalisationManager;
     })();
     RoYT.LocalisationManager = LocalisationManager;
-})(RoYT || (RoYT = {}));
-/// <reference path="index.ts" />
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         * The representation and management of an RoYT loading screen.
         * @class LoadingScreen
@@ -2044,7 +1937,6 @@ var RoYT;
         * @param insertionPoint The DOM element in which the loading screen should be appended to as a child.
         * @param [initialState] An optional initial state for the loading screen, the default is "Loading"
     */
-    "use strict";
     var LoadingScreen = (function () {
         function LoadingScreen(commentSection, initialState, alternativeText) {
             var loadingState = initialState || LoadingState.LOADING;
@@ -2103,14 +1995,7 @@ var RoYT;
         LoadingState[LoadingState["COMPLETE"] = 3] = "COMPLETE";
     })(RoYT.LoadingState || (RoYT.LoadingState = {}));
     var LoadingState = RoYT.LoadingState;
-})(RoYT || (RoYT = {}));
-/// <reference path="index.ts" />
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         * The representation and management of an RoYT loading screen.
         * @class ErrorScreen
@@ -2118,7 +2003,7 @@ var RoYT;
         * @param errorState The error state of the error screen, defines what visuals and titles will be displayed.
         * @param [message] Optional message to be displayed if the error state is set to regular "ERROR"
     */
-    "use strict";
+
     var ErrorScreen = (function () {
         function ErrorScreen(commentSection, errorState, message) {
             this.representedHTMLElement = RoYT.Application.getExtensionTemplateItem(commentSection.template, "error");
@@ -2128,7 +2013,7 @@ var RoYT;
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
             var googlePlusButton = this.representedHTMLElement.querySelector("#royt_switchtogplus");
             googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-            var googlePlusContainer = document.getElementById("watch-discussion");
+            var googlePlusContainer = document.getElementById("ytd-item-section-renderer.style-scope");
             if (RoYT.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
             }
@@ -2144,7 +2029,7 @@ var RoYT;
                     break;
                 case ErrorState.OVERLOAD:
                     /* Retrieve the Reddit overloaded svg graphic from the ressource directory. */
-                    errorImage.setAttribute("src", RoYT.Application.getExtensionRessourcePath("redditoverload.svg"));
+                    errorImage.setAttribute("src", Application.getExtensionRessourcePath("redditoverload.svg"));
                     /* Set reddit overloaded localisation text */
                     errorHeader.textContent = RoYT.Application.localisationManager.get("error_header_overloaded");
                     errorText.textContent = RoYT.Application.localisationManager.get("error_message_overloaded");
@@ -2152,7 +2037,7 @@ var RoYT;
                 case ErrorState.ERROR:
                 case ErrorState.REDDITERROR:
                     /* Retrieve the generic "Reddit is broken" svg graphic from the ressource directory */
-                    errorImage.setAttribute("src", RoYT.Application.getExtensionRessourcePath("redditbroken.svg"));
+                    errorImage.setAttribute("src", Application.getExtensionRessourcePath("redditbroken.svg"));
                     /* Set "you broke reddit" localisation text, and a custom message if provided */
                     errorHeader.textContent = RoYT.Application.localisationManager.get("error_header_generic");
                     if (message) {
@@ -2161,14 +2046,14 @@ var RoYT;
                     break;
                 case ErrorState.CONNECTERROR:
                     /* Retrieve the generic "Reddit is broken" svg graphic from the ressource directory */
-                    errorImage.setAttribute("src", RoYT.Application.getExtensionRessourcePath("redditbroken.svg"));
+                    errorImage.setAttribute("src", Application.getExtensionRessourcePath("redditbroken.svg"));
                     /* Set "connection timed out" localisation text */
                     errorHeader.textContent = RoYT.Application.localisationManager.get("error_header_timeout");
                     errorText.textContent = RoYT.Application.localisationManager.get("error_message_timeout");
                     break;
                 case ErrorState.BLOCKED:
                     /* Retrieve the reddit blocked svg graphic from the ressource directory */
-                    errorImage.setAttribute("src", RoYT.Application.getExtensionRessourcePath("redditblocked.svg"));
+                    errorImage.setAttribute("src", Application.getExtensionRessourcePath("redditblocked.svg"));
                     /* Set "connection is being interrupted" localisation text */
                     errorHeader.textContent = RoYT.Application.localisationManager.get("error_header_interrupted");
                     errorText.textContent = RoYT.Application.localisationManager.get("error_message_interrupted");
@@ -2194,7 +2079,7 @@ var RoYT;
         ErrorScreen.prototype.onGooglePlusClick = function (eventObject) {
             var roytContainer = document.getElementById("royt");
             roytContainer.style.display = "none";
-            var googlePlusContainer = document.getElementById("watch-discussion");
+            var googlePlusContainer = document.getElementById("ytd-item-section-renderer.style-scope");
             googlePlusContainer.style.visibility = "visible";
             googlePlusContainer.style.height = "auto";
             var redditButton = document.getElementById("royt_switchtoreddit");
@@ -2212,101 +2097,11 @@ var RoYT;
         ErrorState[ErrorState["ERROR"] = 5] = "ERROR";
     })(RoYT.ErrorState || (RoYT.ErrorState = {}));
     var ErrorState = RoYT.ErrorState;
-})(RoYT || (RoYT = {}));
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
-    /**
-        * Version migration of preferences and other necessary conversions.
-        * @class Migration
-        * @param lastVersion The version of RoYT the last time the extension was run.
-    */
-    "use strict";
-    var Migration = (function () {
-        function Migration(lastVersion) {
-            this.migrations = {
-                "2.3": function () {
-                    /* Migrate the previous "Display Google+ by default" setting into the "Default display action" setting. */
-                    var displayGplusPreviousSetting = RoYT.Preferences.getBoolean("displayGooglePlusByDefault");
-                    if (displayGplusPreviousSetting === true) {
-                        RoYT.Preferences.set("defaultDisplayAction", "gplus");
-                    }
-                },
-                "2.5": function () {
-                    /* In 2.5 RoYT now uses the youtube channel ID not the display name for setting RoYT or Google+ as default per channel.
-                    We will attempt to migrate existing entries using the YouTube API  */
-                    var previousDisplayActions = RoYT.Preferences.getObject("channelDisplayActions");
-                    if (previousDisplayActions) {
-                        var migratedDisplayActions = {};
-                        var channelNameMigrationTasks = [];
-                        /* Iterate over the collection of previous display actions. We have to perform an asynchronous web request to the YouTube API
-                        for each channel, we will make each request a Promise so we can be informed when they have all been completed,
-                        and work with the final result. */
-                        Object.keys(previousDisplayActions).forEach(function (channelName) {
-                            if (previousDisplayActions.hasOwnProperty(channelName)) {
-                                var promise = new Promise(function (fulfill, reject) {
-                                    var encodedChannelName = encodeURIComponent(channelName);
-                                    var reqUrl = "https://www.googleapis.com/youtube/v3/search?part=id&q=" + encodedChannelName + "&type=channel&key=" + RoYT.APIKeys.youtubeAPIKey;
-                                    new RoYT.HttpRequest(reqUrl, RoYT.RequestType.GET, function (data) {
-                                        var results = JSON.parse(data);
-                                        if (results.items.length > 0) {
-                                            /* We found a match for the display name. We will migrate the old value to the new channel id. */
-                                            migratedDisplayActions[results.items[0].id.channelId] = previousDisplayActions[channelName];
-                                        }
-                                        fulfill();
-                                    }, null, function (error) {
-                                        /* The request could not be completed, we will fail the migration and try again next time. */
-                                        reject(error);
-                                    });
-                                });
-                                channelNameMigrationTasks.push(promise);
-                            }
-                        });
-                        Promise.all(channelNameMigrationTasks).then(function () {
-                            /* All requests were successful, we will save the resul and move on. */
-                            RoYT.Preferences.set("channelDisplayActions", migratedDisplayActions);
-                        }, function () {
-                            /* One of the requests has failed, the transition will be discarded. We will set our last run version to the previous
-                            version so RoYT will attempt the migration again next time. */
-                            RoYT.Preferences.set("lastRunVersion", "2.4");
-                        });
-                    }
-                }
-            };
-            /* If lastVersion is not set, we will assume the version is 2.2. */
-            lastVersion = lastVersion || "2.2";
-            /* Get an array of the different version migrations available. */
-            var versions = Object.keys(this.migrations);
-            /* If our previous version is not in the list, insert it so we will know our place in the version history. */
-            versions.push(lastVersion);
-            /* Run an alphanumerical string sort on the array, this will serve to organise the versions from old to new. */
-            versions.sort();
-            /* Get the index of the previous version, and remove it and all migrations before it, leaving migrations for newer versions behind */
-            var positionOfPreviousVersion = versions.indexOf(lastVersion) + 1;
-            versions.splice(0, positionOfPreviousVersion);
-            /* Call the migrations to newer versions in sucession. */
-            versions.forEach(function (version) {
-                this.migrations[version].call(this, null);
-            }.bind(this));
-        }
-        return Migration;
-    })();
-    RoYT.Migration = Migration;
-})(RoYT || (RoYT = {}));
-/**
-    * Namespace for All RoYT operations.
-    * @namespace RoYT
-*/
-var RoYT;
-(function (RoYT) {
+
     /**
         Class for managing API keys to third party APIs. This is seperated to easily exclude them in source control.
         @class APIKeys
     */
-    "use strict";
     var APIKeys = (function () {
         function APIKeys() {
         }
@@ -2314,14 +2109,11 @@ var RoYT;
         return APIKeys;
     })();
     RoYT.APIKeys = APIKeys;
-})(RoYT || (RoYT = {}));
 
-/**
-    * Namespace for requests to the Reddit API operations.
-    * @namespace RoYT.Reddit
-*/
-var RoYT;
-(function (RoYT) {
+		/**
+	    * Namespace for requests to the Reddit API operations.
+	    * @namespace RoYT.Reddit
+			*/
     var Reddit;
     (function (Reddit) {
         /**
@@ -2333,7 +2125,6 @@ var RoYT;
             * @param [postData] Eventual HTTP POST data to send with the request.
             * @param [loadingScreen] A LoadingScreen object to use for updating the progress of the request.
         */
-        "use strict";
         var Request = (function () {
             function Request(url, type, callback, postData, loadingScreen) {
                 this.loadTimer = 0;
@@ -2344,6 +2135,7 @@ var RoYT;
                 this.finalCallback = callback;
                 this.postData = postData;
                 this.loadingScreen = loadingScreen;
+								this.attempts = 0;
                 /* Perform the request. */
                 this.performRequest();
             }
@@ -2428,17 +2220,7 @@ var RoYT;
             return Request;
         })();
         Reddit.Request = Request;
-    })(Reddit = RoYT.Reddit || (RoYT.Reddit = {}));
-})(RoYT || (RoYT = {}));
 
-/**
-    * Namespace for requests to the Reddit API operations.
-    * @namespace RoYT.Reddit
-*/
-var RoYT;
-(function (RoYT) {
-    var Reddit;
-    (function (Reddit) {
         /**
             * Perform a request to Reddit to submit a comment.
             * @class CommentRequest
@@ -2446,7 +2228,6 @@ var RoYT;
             * @param comment A markdown string containing the user's comment
             * @param callback Callback handler for the event when loaded.
         */
-        "use strict";
         var CommentRequest = (function () {
             function CommentRequest(thing, comment, callback) {
                 var url = "https://api.reddit.com/api/comment";
@@ -2460,16 +2241,7 @@ var RoYT;
             return CommentRequest;
         })();
         Reddit.CommentRequest = CommentRequest;
-    })(Reddit = RoYT.Reddit || (RoYT.Reddit = {}));
-})(RoYT || (RoYT = {}));
-/**
-    * Namespace for requests to the Reddit API operations.
-    * @namespace RoYT.Reddit
-*/
-var RoYT;
-(function (RoYT) {
-    var Reddit;
-    (function (Reddit) {
+
         /**
             Perform a request to Reddit to edit an existing comment.
             @class EditCommentRequest
@@ -2477,7 +2249,6 @@ var RoYT;
             @param comment A markdown string containing the user's new comment
             @param callback Callback handler for the event when loaded.
         */
-        "use strict";
         var EditCommentRequest = (function () {
             function EditCommentRequest(thing, comment, callback) {
                 var url = "https://api.reddit.com/api/editusertext";
@@ -2491,16 +2262,7 @@ var RoYT;
             return EditCommentRequest;
         })();
         Reddit.EditCommentRequest = EditCommentRequest;
-    })(Reddit = RoYT.Reddit || (RoYT.Reddit = {}));
-})(RoYT || (RoYT = {}));
-/**
-    * Namespace for requests to the Reddit API operations.
-    * @namespace RoYT.Reddit
-*/
-var RoYT;
-(function (RoYT) {
-    var Reddit;
-    (function (Reddit) {
+
         /**
             Perform a request to Reddit to either save or unsave an item.
             @class RedditVoteRequest
@@ -2508,7 +2270,6 @@ var RoYT;
             @param type Whether the user wants to upvote, downvote, or remove their vote.
             @param callback Callback handler for the event when loaded.
         */
-        "use strict";
         var VoteRequest = (function () {
             function VoteRequest(thing, type, callback) {
                 var url = "https://api.reddit.com/api/vote";
@@ -2527,16 +2288,7 @@ var RoYT;
             Vote[Vote["REMOVE"] = 0] = "REMOVE";
         })(Reddit.Vote || (Reddit.Vote = {}));
         var Vote = Reddit.Vote;
-    })(Reddit = RoYT.Reddit || (RoYT.Reddit = {}));
-})(RoYT || (RoYT = {}));
-/**
-    * Namespace for requests to the Reddit API operations.
-    * @namespace RoYT.Reddit
-*/
-var RoYT;
-(function (RoYT) {
-    var Reddit;
-    (function (Reddit) {
+
         /**
             Report a post or comment to moderators.
             @class RedditReport
@@ -2544,7 +2296,7 @@ var RoYT;
             @param commentThread CommentThread object representing the container of the comment.
             @param isThread Whether the thing being reported is an entire thread.
         */
-        "use strict";
+
         var Report = (function () {
             function Report(thing, commentThread, isThread) {
                 var reportTemplate = RoYT.Application.getExtensionTemplateItem(commentThread.commentSection.template, "report");
@@ -2659,16 +2411,7 @@ var RoYT;
             return Report;
         })();
         Reddit.Report = Report;
-    })(Reddit = RoYT.Reddit || (RoYT.Reddit = {}));
-})(RoYT || (RoYT = {}));
-/**
-    * Namespace for requests to the Reddit API operations.
-    * @namespace RoYT.Reddit
-*/
-var RoYT;
-(function (RoYT) {
-    var Reddit;
-    (function (Reddit) {
+
         /**
             Perform a request to Reddit to either save or unsave an item.
             @class RedditSaveRequest
@@ -2676,7 +2419,7 @@ var RoYT;
             @param type Whether to save or unsave
             @param callback Callback handler for the event when loaded.
         */
-        "use strict";
+
         var SaveRequest = (function () {
             function SaveRequest(thing, type, callback) {
                 var url = "https://api.reddit.com/api/" + SaveType[type].toLowerCase();
@@ -2693,21 +2436,12 @@ var RoYT;
             SaveType[SaveType["UNSAVE"] = 1] = "UNSAVE";
         })(Reddit.SaveType || (Reddit.SaveType = {}));
         var SaveType = Reddit.SaveType;
-    })(Reddit = RoYT.Reddit || (RoYT.Reddit = {}));
-})(RoYT || (RoYT = {}));
-/**
-    * Namespace for requests to the Reddit API operations.
-    * @namespace RoYT.Reddit
-*/
-var RoYT;
-(function (RoYT) {
-    var Reddit;
-    (function (Reddit) {
+
         /**
             Perform a request to Reddit asking for the user's username so we can save and display it.
             @class RetreiveUsernameRequest
         */
-        "use strict";
+
         var RetreiveUsernameRequest = (function () {
             function RetreiveUsernameRequest() {
                 var url = "https://api.reddit.com/api/me.json";
@@ -2726,10 +2460,18 @@ var RoYT;
         Reddit.RetreiveUsernameRequest = RetreiveUsernameRequest;
     })(Reddit = RoYT.Reddit || (RoYT.Reddit = {}));
 })(RoYT || (RoYT = {}));
-"use strict";
+
+var Service;
+(function (Service) {
+    Service[Service["YouTube"] = 0] = "YouTube";
+    Service[Service["Vimeo"] = 1] = "Vimeo";
+})(Service || (Service = {}));
+
 function royt_initialise() {
     if (window.top === window) {
-        new RoYT.Application();
+        setTimeout(function() {
+					new RoYT.Application();
+				}, 5000);
     }
 }
 if (document.readyState === "complete" || document.readyState === "interactive") {
