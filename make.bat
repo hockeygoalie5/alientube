@@ -9,7 +9,7 @@ ECHO Removing old files.
 ECHO Removing SASS stylesheet code-mapping file.
 DEL /Q /F "royt/style.css.map"
 DEL /Q /F "options/options.css.map"
-IF NOT (%1) == (--debug) ECHO Removing old addon versions. & DEL /Q /F *.zip
+IF NOT (%1) == (--debug) ECHO Removing old addon versions. & DEL /Q /F web-ext-artifacts\*.zip
 ECHO.
 ECHO.
 

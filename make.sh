@@ -34,7 +34,7 @@ rm -f royt/style.css.map
 rm -f options/options.css.map
 if [  "$1" != "--debug" ]; then
 	echo Removing old addon versions.
-	rm -f *.zip
+	rm -f web-ext-artifacts/*.zip
 fi
 echo
 echo
