@@ -1,4 +1,4 @@
-Reddit on Youtube (RoYT) [![Build Status](https://travis-ci.org/mustafakalash/royt.svg?branch=master)](https://travis-ci.org/mustafakalash/royt)
+Reddit on Youtube (RoYT)
 =========
 
 Adds Reddit comments to Youtube videos!

@@ -30,33 +30,29 @@ echo
 
 echo ${standout}Removing old files${normal}
 echo Removing SASS stylesheet code-mapping file.
-rm -f data/style.css.map
+rm -f royt/style.css.map
+rm -f options/options.css.map
 if [  "$1" != "--debug" ]; then
 	echo Removing old addon versions.
-	rm -f *.xpi
+	rm -f web-ext-artifacts/*.zip
 fi
-echo Removing any old install.rdf or bootstrap.js that may have gotten out of the package.
-rm -f install.rdf
-rm -f bootstrap.js
 echo
 echo
 
 echo ${standout}Compiling SASS style files.${normal}
 echo Compiling Main SASS stylesheet.
-sass data/style.scss data/style.css
+sass royt/style.scss royt/style.css
 echo Compiling Options SASS stylesheet
-sass data/options.scss data/options.css
+sass options/options.scss options/options.css
 echo
 echo
 
 if [ "$1" == "--debug" ]; then
 	echo ${standout}Running tests.${normal}
-	jpm test --binary-args 'https://www.youtube.com/watch?v=gozIJFK1jVU' --tbpl | grep -E -v "^(TEST-INFO \| \[JavaScript Warning)|^(\"}])" | tee testlog.txt
-	grep "All tests passed\!" testlog.txt > /dev/null
-	(! grep -E "^(TEST-INFO \| \[JavaScript Error).*(15f28b3a-c42b-463c-907a-e69d0eb2988a-at-jetpack)" testlog.txt) > /dev/null
+	web-ext run --verbose -u https://youtu.be/gozIJFK1jVU
 else
-	echo ${standout}Packaging .xpi${normal}
-	jpm xpi
+	echo ${standout}Packaging extension${normal}
+	web-ext build --verbose
 fi
 echo
 echo

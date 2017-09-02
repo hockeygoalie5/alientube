@@ -1,9 +1,7 @@
-.project
-.settings/
-
 *.map
-*.xpi
+*.css
 
 .sass-cache/
 
-testlog.txt
+web-ext-artifacts/
+*.zip

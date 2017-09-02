@@ -1,4 +1,4 @@
-@import 'bourbon/bourbon';
+@import '../royt/bourbon/bourbon';
 
 body {
 	  font-family: 'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
@@ -10,7 +10,7 @@ main {
 	min-height: 265px;
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 200px; 
+	margin-top: 200px;
 }
 
 header {
@@ -18,11 +18,11 @@ header {
 	overflow: auto;
 	padding: 1rem;
 	position: relative;
-	
+
 	img, h1 {
 		float: left;
 	}
-	
+
 	h1 {
 		margin: 0;
 		margin-left: 20px;
@@ -31,7 +31,7 @@ header {
 		font-size: 300%;
 		color: #8e8e8e;
 	}
-	
+
 	#versionContainer {
 		position: absolute;
 		bottom: 1rem;
@@ -52,15 +52,15 @@ button {
 	background: #fcfcfc;
 	border: 1px solid #d24545;
 	cursor: pointer;
-	
+
 	&:hover {
 		background: #f6f6f6;
 	}
-	
+
 	&:active {
 		background: #d9d9d9;
 	}
-	
+
 	&:focus {
 		outline: 0;
 	}
@@ -100,7 +100,7 @@ select {
 .selectContainer {
 	float: right;
 	position: relative;
-	
+
 	&::after {
 		display: inline-block;
 		position: absolute;
@@ -133,9 +133,9 @@ label {
 	float: right;
     content: '';
     background: #fff;
-    border: 1px solid #d24545; 
+    border: 1px solid #d24545;
     width: 22px;
-    height: 22px; 
+    height: 22px;
     padding: 2px;
     text-align: center;
 }
@@ -155,22 +155,22 @@ label {
 
 #exclusioncontainer {
 	position: relative;
-	
+
 	&:before {
 		content: '/r/';
 		color: #7f7f7f;
 		position: absolute;
-		
+
 		top: 5px;
 		left: 10px;
 		font-size: 150%;
 	}
-} 
+}
 
 #excludedSubreddits {
 	margin-top: 10px;
 	position: relative;
-	
+
 	& > div {
 		@include box-sizing(border-box);
 		width: 340px;
@@ -182,11 +182,11 @@ label {
 		background: #f1f1f1;
 		opacity: 1;
 		@include transition(all 0.5s ease-in-out);
-		
+
 		&:hover {
 			background: #e9e9e9;
 		}
-		
+
 		& > button {
 			float: right;
 			width: 18px;
@@ -198,21 +198,21 @@ label {
 			font-weight: 700;
 			font-size: 75%;
 			color: #a9a9a9;
-			
+
 			&:hover {
 				color: #cac6c6;
 			}
-			
+
 			&:active {
 				color: #cac6c6;
 			}
 		}
-		
+
 		&.new {
 			opacity: 0;
 			@include transform(translate(20px, -39px));
 		}
-		
+
 		&.removed {
 			opacity: 0;
 		}
@@ -229,7 +229,7 @@ label {
 
 #addSubredditToList {
 	padding: 5px;
-	
+
 	&:disabled, &disabled:hover {
 		opacity: 0.5;
 		cursor: default;
