@@ -16,30 +16,18 @@ var RoYT;
             RoYT.Preferences.initialise();
             // Load language files.
             Application.localisationManager = new RoYT.LocalisationManager(function() {
-                if (Application.currentMediaService() === Service.YouTube) {
-                    // Start observer to detect when a new video is loaded.
-                    var observer = new MutationObserver(this.youtubeMutationObserver);
-                    var config = {
-                        attributes: true,
-                        childList: true,
-                        characterData: true
-                    };
-                    observer.observe(Application.getYouTubeSection("page"), config);
-                    // Start a new comment section.
-                    this.currentVideoIdentifier = Application.getCurrentVideoId();
-                    if (RoYT.Utilities.isVideoPage) {
-                        Application.commentSection = new RoYT.CommentSection(this.currentVideoIdentifier);
-                    }
-
-                } else if (Application.currentMediaService() === Service.Vimeo) {
-                    // Start observer to detect when a new video is loaded.
-                    var observer = new MutationObserver(this.vimeoMutationObserver);
-                    var config = {
-                        attributes: true,
-                        childList: true,
-                        characterData: true
-                    };
-                    observer.observe(document.querySelector(".extras_wrapper"), config);
+                // Start observer to detect when a new video is loaded.
+                var observer = new MutationObserver(this.youtubeMutationObserver);
+                var config = {
+                    attributes: true,
+                    childList: true,
+                    characterData: true
+                };
+                observer.observe(Application.getYouTubeSection("page"), config);
+                // Start a new comment section.
+                this.currentVideoIdentifier = Application.getCurrentVideoId();
+                if (RoYT.Utilities.isVideoPage) {
+                    Application.commentSection = new RoYT.CommentSection(this.currentVideoIdentifier);
                 }
             }.bind(this));
         }
@@ -129,20 +117,14 @@ var RoYT;
          * @returns video identifier.
          */
         Application.getCurrentVideoId = function() {
-            if (Application.currentMediaService() === Service.YouTube) {
-                if (window.location.search.length > 0) {
-                    var s = window.location.search.substring(1);
-                    var requestObjects = s.split('&');
-                    for (var i = 0, len = requestObjects.length; i < len; i += 1) {
-                        var obj = requestObjects[i].split('=');
-                        if (obj[0] === "v") {
-                            return obj[1];
-                        }
+            if (window.location.search.length > 0) {
+                var s = window.location.search.substring(1);
+                var requestObjects = s.split('&');
+                for (var i = 0, len = requestObjects.length; i < len; i += 1) {
+                    var obj = requestObjects[i].split('=');
+                    if (obj[0] === "v") {
+                        return obj[1];
                     }
-                }
-            } else if (Application.currentMediaService() === Service.Vimeo) {
-                if (window.location.pathname.length > 1) {
-                    return window.location.pathname.substring(1);
                 }
             }
             return null;
@@ -227,20 +209,6 @@ var RoYT;
         Application.getExtensionTemplateItem = function(templateCollection, id) {
             return templateCollection.querySelector("#" + id).content.cloneNode(true);
         };
-        /**
-         * Get the current media website that RoYT is on
-         * @returns A "Service" enum value representing a media service.
-         */
-        Application.currentMediaService = function() {
-            if (window.location.host === "www.youtube.com") {
-                return Service.YouTube;
-            } else if (window.location.host === "vimeo.com") {
-                return Service.Vimeo;
-            }
-            return null;
-        };
-
-
         return Application;
     })();
     RoYT.Application = Application;
@@ -598,15 +566,9 @@ var RoYT;
         CommentSection.prototype.set = function(contents) {
             var redditContainer = document.createElement("section");
             redditContainer.id = "royt";
-            var commentsContainer;
-            var serviceCommentsContainer;
-            if (RoYT.Application.currentMediaService() === Service.YouTube) {
-                commentsContainer = Application.getYouTubeSection("commentsContainer");
-                serviceCommentsContainer = Application.getYouTubeSection("serviceCommentsContainer");
-            } else if (RoYT.Application.currentMediaService() === Service.Vimeo) {
-                commentsContainer = document.querySelector(".comments_container");
-                serviceCommentsContainer = document.querySelector(".comments_hide");
-            }
+            var commentsContainer = Application.getYouTubeSection("commentsContainer");
+            var serviceCommentsContainer = Application.getYouTubeSection("serviceCommentsContainer");
+
             var previousRedditInstance = document.getElementById("royt");
             if (previousRedditInstance) {
                 commentsContainer.removeChild(previousRedditInstance);
@@ -640,12 +602,8 @@ var RoYT;
             /* Set the setting for whether or not RoYT should show itself on this YouTube channel */
             var allowOnChannelContainer = document.getElementById("allowOnChannelContainer");
             if (!allowOnChannelContainer) {
-                var actionsContainer;
-                if (RoYT.Application.currentMediaService() === Service.YouTube) {
-                    actionsContainer = Application.getYouTubeSection("actionsContainer");
-                } else if (RoYT.Application.currentMediaService() === Service.Vimeo) {
-                    actionsContainer = document.querySelector(".video_meta .byline");
-                }
+                var actionsContainer = Application.getYouTubeSection("actionsContainer");
+
                 var allowOnChannel = RoYT.Application.getExtensionTemplateItem(this.template, "allowonchannel");
                 allowOnChannel.children[0].appendChild(document.createTextNode(RoYT.Application.localisationManager.get("options_label_showReddit")));
                 var allowOnChannelCheckbox = allowOnChannel.querySelector("#allowonchannel");
@@ -656,7 +614,6 @@ var RoYT;
                 actionsContainer.appendChild(allowOnChannel);
             }
             /* Add RoYT contents */
-            redditContainer.setAttribute("service", Service[RoYT.Application.currentMediaService()]);
             redditContainer.appendChild(contents);
             commentsContainer.appendChild(redditContainer);
             return redditContainer;
@@ -718,12 +675,8 @@ var RoYT;
         CommentSection.prototype.insertTabsIntoDocument = function(tabContainer, selectTabAtIndex) {
             var overflowContainer = tabContainer.querySelector("#royt_overflow");
             var len = this.threadCollection.length;
-            var maxWidth;
-            if (RoYT.Application.currentMediaService() === Service.YouTube) {
-                maxWidth = Application.getYouTubeSection("commentsContainer").offsetWidth - 80;
-            } else if (RoYT.Application.currentMediaService() === Service.Vimeo) {
-                maxWidth = document.getElementById("comments").offsetWidth - 80;
-            }
+            var maxWidth = Application.getYouTubeSection("commentsContainer").offsetWidth - 80;
+
             var width = (21 + this.threadCollection[0].subreddit.length * 7);
             var i = 0;
             /* Calculate the width of tabs and determine how many you can fit without breaking the bounds of the comment section. */
@@ -956,12 +909,8 @@ var RoYT;
          * @private
          */
         CommentSection.prototype.getDisplayActionForCurrentChannel = function() {
-            var channelId;
-            if (RoYT.Application.currentMediaService() === Service.YouTube) {
-                channelId = Application.getYouTubeSection("actionsContainer").firstChild.innerText;
-            } else if (RoYT.Application.currentMediaService() === Service.Vimeo) {
-                channelId = document.querySelector("a[rel='author']").getAttribute("href").substring(1);
-            }
+            var channelId = Application.getYouTubeSection("actionsContainer").firstChild.innerText;
+
             var displayActionByUser = RoYT.Preferences.get("channelDisplayActions")[channelId];
             if (displayActionByUser) {
                 return displayActionByUser;
@@ -1012,11 +961,7 @@ var RoYT;
          * @private
          */
         CommentSection.prototype.getVideoSearchString = function(videoID) {
-            if (RoYT.Application.currentMediaService() === Service.YouTube) {
-                return [encodeURI("url:https://www.youtube.com/watch?v=" + videoID), encodeURI("url:https://youtu.be/" + videoID)];
-            } else if (RoYT.Application.currentMediaService() === Service.Vimeo) {
-                return [encodeURI("url:https://vimeo.com/" + videoID), encodeURI("url:http://vimeo.com/" + videoID)];
-            }
+            return [encodeURI("url:https://www.youtube.com/watch?v=" + videoID), encodeURI("url:https://youtu.be/" + videoID)];
         };
         return CommentSection;
     })();
@@ -2382,12 +2327,6 @@ var RoYT;
         Reddit.RetreiveUsernameRequest = RetreiveUsernameRequest;
     })(Reddit = RoYT.Reddit || (RoYT.Reddit = {}));
 })(RoYT || (RoYT = {}));
-
-var Service;
-(function(Service) {
-    Service[Service["YouTube"] = 0] = "YouTube";
-    Service[Service["Vimeo"] = 1] = "Vimeo";
-})(Service || (Service = {}));
 
 function royt_initialise() {
     if (window.top === window) {
