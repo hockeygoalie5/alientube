@@ -375,6 +375,7 @@ body {
         &.hidden {
             padding-top: 0;
             padding-bottom: 10px !important;
+            display: block;
 
             & .royt_author {
                 color: gray !important;
