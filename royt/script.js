@@ -21,7 +21,8 @@ var RoYT;
                 var config = {
                     attributes: true,
                     childList: true,
-                    characterData: true
+                    characterData: true,
+                    subtree: true
                 };
                 observer.observe(Application.getYouTubeSection("page"), config);
                 // Start a new comment section.
@@ -60,16 +61,16 @@ var RoYT;
                     default:
                         return null;
                     case "page":
-                        selector = "#content";
+                        selector = "ytd-app";
                         break;
                     case "commentsContainer":
-                        selector = "#comments";
+                        selector = "ytd-comments#comments.style-scope.ytd-watch";
                         break;
                     case "serviceCommentsContainer":
-                        selector = "ytd-item-section-renderer.style-scope";
+                        selector = "ytd-item-section-renderer.style-scope.ytd-comments";
                         break;
                     case "actionsContainer":
-                        selector = "#owner-container";
+                        selector = "div#owner-container.style-scope.ytd-video-owner-renderer";
                         break;
                 }
             }
@@ -82,35 +83,13 @@ var RoYT;
          * @private
          */
         Application.prototype.youtubeMutationObserver = function(mutations) {
-            mutations.forEach(function(mutation) {
-                var target = mutation.target;
-                if (target.id === "page-manager") {
-                    var reportedVideoId = Application.getCurrentVideoId();
-                    if (reportedVideoId !== this.currentVideoIdentifier) {
-                        this.currentVideoIdentifier = reportedVideoId;
-                        if (RoYT.Utilities.isVideoPage) {
-                            Application.commentSection = new RoYT.CommentSection(this.currentVideoIdentifier);
-                        }
-                    }
+            var reportedVideoId = Application.getCurrentVideoId();
+            if (reportedVideoId !== this.currentVideoIdentifier || !document.getElementById("royt")) {
+                this.currentVideoIdentifier = reportedVideoId;
+                if (RoYT.Utilities.isVideoPage) {
+                    Application.commentSection = new RoYT.CommentSection(this.currentVideoIdentifier);
                 }
-            }.bind(this));
-        };
-        /**
-         * Mutation Observer for monitoring for whenver the user changes to a new "page" on YouTube
-         * @param mutations A collection of mutation records
-         * @private
-         */
-        Application.prototype.vimeoMutationObserver = function(mutations) {
-            mutations.forEach(function(mutation) {
-                var target = mutation.target;
-                var reportedVideoId = Application.getCurrentVideoId();
-                if (reportedVideoId !== this.currentVideoIdentifier) {
-                    this.currentVideoIdentifier = reportedVideoId;
-                    if (RoYT.Utilities.isVideoPage) {
-                        Application.commentSection = new RoYT.CommentSection(this.currentVideoIdentifier);
-                    }
-                }
-            }.bind(this));
+            }
         };
         /**
          * Get the current video identifier of the window.
@@ -655,7 +634,7 @@ var RoYT;
                         }
                     }
                 }
-            } else if (itemFromResultSet.domain === "youtu.be" || itemFromResultSet.domain === "vimeo.com") {
+            } else if (itemFromResultSet.domain === "youtu.be") {
                 // For urls based on the shortened youtu.be domain, retrieve everything the path after the domain and compare it.
                 var urlSearch = itemFromResultSet.url.substring(itemFromResultSet.url.lastIndexOf("/") + 1);
                 var obj = urlSearch.split('?');
@@ -956,7 +935,7 @@ var RoYT;
         };
         /**
          * Get the Reddit search string to perform.
-         * @param videoID The YouTube or Vimeo video id to make a search for.
+         * @param videoID The YouTube video id to make a search for.
          * @returns Array of search strings to find video
          * @private
          */
@@ -1368,6 +1347,12 @@ var RoYT;
                     this.representedHTMLElement.parentNode.removeChild(this.representedHTMLElement);
                 });
             }
+            // refresh the comments
+            this.commentThread.commentSection.threadCollection.forEach(function(item) {
+                if (item.id === this.threadInformation.id) {
+                    this.commentThread.commentSection.downloadThread(item);
+                }
+            });
         };
         /**
          * Cancel / Remove the comment field.
