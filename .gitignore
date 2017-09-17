@@ -1,7 +1,1 @@
-*.map
-*.css
-
-.sass-cache/
-
-web-ext-artifacts/
 *.zip

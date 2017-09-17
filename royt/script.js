@@ -431,8 +431,8 @@ var RoYT;
                     var loadingScreen = new RoYT.LoadingScreen(this, RoYT.LoadingState.LOADING, RoYT.Application.localisationManager.get("loading_search_message"));
                     this.set(loadingScreen.HTMLElement);
                     // Open a search request to Reddit for the video identfiier
-                    var videoSearchStrings = this.getVideoSearchString(currentVideoIdentifier);
-                    new RoYT.Reddit.Request("https://api.reddit.com/search.json?q=" + videoSearchStrings[0], RoYT.RequestType.GET, function(results) {
+                    var videoSearchString = this.getVideoSearchString(currentVideoIdentifier);
+                    new RoYT.Reddit.Request("https://api.reddit.com/search.json?syntax=cloudsearch&q=" + videoSearchString, RoYT.RequestType.GET, function(results) {
                         // There are a number of ways the Reddit API can arbitrarily explode, here are some of them.
                         if (results === {} || results.kind !== 'Listing' || results.data.children.length === 0) {
                             this.returnNoResults();
@@ -936,11 +936,11 @@ var RoYT;
         /**
          * Get the Reddit search string to perform.
          * @param videoID The YouTube video id to make a search for.
-         * @returns Array of search strings to find video
+         * @returns Search string to find video
          * @private
          */
         CommentSection.prototype.getVideoSearchString = function(videoID) {
-            return [encodeURI("url:https://www.youtube.com/watch?v=" + videoID), encodeURI("url:https://youtu.be/" + videoID)];
+            return encodeURI("(url:" + videoID + ") AND (site:youtube.com OR site:youtu.be)");
         };
         return CommentSection;
     })();
