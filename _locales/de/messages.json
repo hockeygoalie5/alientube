@@ -197,7 +197,7 @@
         "description": "Label for the 'controversial' sort option"
     },
     "post_sort_old": {
-        "message": "alt",
+        "message": "älteste",
         "description": "Label for the 'old' sort option"
     },
     "post_sort_qa": {
