@@ -552,15 +552,7 @@ var RoYT;
             if (previousRedditInstance) {
                 commentsContainer.removeChild(previousRedditInstance);
             }
-            /* Check if Dark Mode is activated, and set RoYT to dark mode */
-            this.checkEnvironmentDarkModestatus(redditContainer);
-            /* Since there is no implicit event for a css property has changed, I have set a small transition on the body background colour.
-               this transition will trigger the transitionend event and we can use that to check if the background colour has changed, thereby activating dark mode. */
-            document.body.addEventListener("transitionend", function(e) {
-                if (e.propertyName === "background-color" && e.srcElement.tagName === "BODY") {
-                    this.checkEnvironmentDarkModestatus(document.getElementById("royt"));
-                }
-            }, false);
+
             if (serviceCommentsContainer) {
                 /* Add the "switch to Reddit" button in the google+ comment section */
                 var redditButton = document.getElementById("royt_switchtoreddit");
@@ -913,25 +905,6 @@ var RoYT;
             }
             var seconds = Math.floor(((new Date()).getTime() / 1000) - thread.created_utc) - 1134028003;
             return Math.round((order + sign * seconds / 4500) * 10000000) / 10000000;
-        };
-        /**
-         * Check whether the website is currently using a "dark mode" plugin, and change RoYT's style to comply.
-         * @param roytContainer DOM node of an RoYT section element to apply the style to.
-         * @private
-         */
-        CommentSection.prototype.checkEnvironmentDarkModestatus = function(roytContainer) {
-            var bodyBackgroundColour = window.getComputedStyle(document.body, null).getPropertyValue('background-color');
-            var bodyBackgroundColourArray = bodyBackgroundColour.substring(4, bodyBackgroundColour.length - 1).replace(/ /g, '').split(',');
-            var bodyBackgroundColourAverage = 0;
-            for (var i = 0; i < 3; i += 1) {
-                bodyBackgroundColourAverage = bodyBackgroundColourAverage + parseInt(bodyBackgroundColourArray[i], 10);
-            }
-            bodyBackgroundColourAverage = bodyBackgroundColourAverage / 3;
-            if (bodyBackgroundColourAverage < 100) {
-                roytContainer.classList.add("darkmode");
-            } else {
-                roytContainer.classList.remove("darkmode");
-            }
         };
         /**
          * Get the Reddit search string to perform.

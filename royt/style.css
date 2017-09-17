@@ -360,7 +360,7 @@ body {
     padding-bottom: 0;
 }
 #royt .royt_flair {
-    padding: 0 2px;
+    padding: 2px;
     background: #f5f5f5;
     color: #555;
     border: 1px solid #ddd;
@@ -826,56 +826,57 @@ a[href$="/spoiler"]::before {
     margin-right: 10px;
     float: right;
 }
-.darkmode {
+[dark] #royt {
     background: #242424 !important;
     color: #fff;
 }
-.darkmode select {
+[dark] select {
     background: #242424 !important;
 }
-.darkmode textarea {
+[dark] textarea {
     background: #3e3e3e !important;
+    border: none;
 }
-.darkmode .royt_tab {
+[dark] .royt_tab {
     text-shadow: none;
     background: #242424 !important;
 }
-.darkmode .royt_tab a {
+[dark] .royt_tab a {
     color: #555555 !important;
 }
-.darkmode .royt_tab:hover {
+[dark] .royt_tab:hover {
     background: #2f2f2f !important;
 }
-.darkmode .royt_tab.active {
+[dark] .royt_tab.active {
     padding-bottom: 0;
 }
-.darkmode .royt_tab.active:hover {
+[dark] .royt_tab.active:hover {
     background: #242424 !important;
 }
-.darkmode #royt_overflow {
+[dark] #royt_overflow {
     background: #242424 !important;
 }
-.darkmode #royt_overflow:hover {
+[dark] #royt_overflow:hover {
     background-image: #575757;
 }
-.darkmode #royt_overflow ul {
+[dark] #royt_overflow ul {
     background: #262626;
 }
-.darkmode .royt_score,
-.darkmode .royt_commentcontent > span > p {
+[dark] .royt_score,
+[dark] .royt_commentcontent > span > p {
     color: #f6f6f6 !important;
 }
-.darkmode article.deleted > .royt_commentmain > .royt_commentcontent {
+[dark] article.deleted > .royt_commentmain > .royt_commentcontent {
     background: #4f4f4f;
 }
-.darkmode #royt_switchtogplus svg,
-.darkmode #royt_switchtoreddit svg {
+[dark] #royt_switchtogplus svg,
+[dark] #royt_switchtoreddit svg {
     fill: #fff;
 }
-.darkmode .royt_writingauthor {
+[dark] .royt_writingauthor {
     color: #acacac;
 }
-.darkmode .royt_replies article {
+[dark] .royt_replies article {
     border-left: 1px dotted #7c7c7c !important;
 }
 #allowOnChannelContainer {
@@ -885,11 +886,24 @@ a[href$="/spoiler"]::before {
     pointer-events: auto;
     color: #fd4040 !important;
 }
-#royt.darkmode .royt_tab.active {
+[dark] .royt_tab.active {
     border-bottom: 5px solid #ff5353;
 }
-#royt.darkmode .royt_tab.active a {
+[dark] .royt_tab.active a {
     color: #0066aa !important;
+}
+[dark] #royt .button {
+  background: rgb(162, 162, 162);
+}
+[dark] #royt .button:hover {
+  background: rgb(100, 100, 100);
+}
+[dark] #royt .royt_flair, [dark] #royt article.deleted > .royt_commentmain > .royt_commentcontent {
+  background: rgb(162, 162, 162);
+  border-color: rgb(100, 100, 100);
+}
+[dark] #allowOnChannelContainer {
+  color: rgba(255, 255, 255, 0.88);
 }
 #royt #royt_overflow > ul > li:hover {
     background: #fd4040;
