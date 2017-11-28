@@ -1,3 +1,5 @@
+[<img alt='Get it on Mozilla Addons' src='https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_1.png' width='172' height="60"/>](https://addons.mozilla.org/firefox/addon/reddit-on-youtube/)
+
 Reddit on Youtube (RoYT)
 =========
 
