@@ -12,8 +12,8 @@
         "strict_min_version": "42.0"
       }
     },
-    "version": "2.2.0",
-    "manifest_version": 2,
+    "version": "2.3.0",
+    "manifest_version": 3,
     "default_locale": "en_US",
 
     "permissions": [
@@ -33,7 +33,7 @@
 
     "content_scripts": [
       {
-        "matches": ["*://*.youtube.com/*"],
+        "matches": ["*://*.youtube.com/*", "*://*.youtu.be/*"],
         "css": ["royt/style.css"],
         "js": ["royt/snuownd.js", "royt/handlebars-v3.0.3.js", "royt/script.js"]
       }
