@@ -566,8 +566,7 @@ var RoYT;
                     redditContainer.style.display = "none";
                     redditButton.style.display = "block";
                 } else {
-                    serviceCommentsContainer.style.visibility = "collapse";
-                    serviceCommentsContainer.style.height = "0";
+                    serviceCommentsContainer.style.display = "none";
                 }
             }
             /* Set the setting for whether or not RoYT should show itself on this YouTube channel */
@@ -583,6 +582,11 @@ var RoYT;
                 }
                 allowOnChannelCheckbox.addEventListener("change", this.allowOnChannelChange, false);
                 actionsContainer.appendChild(allowOnChannel);
+            }
+            /* Apply style adjustments for new layout */
+            if(!Utilities.useOldYouTubeLayout()) {
+                redditContainer.classList.add("new-layout");
+                allowOnChannelContainer.classList.add("new-layout");
             }
             /* Add RoYT contents */
             redditContainer.appendChild(contents);
@@ -727,8 +731,7 @@ var RoYT;
             }
             this.set(template);
             if (RoYT.Preferences.get("showGooglePlusWhenNoPosts") && googlePlusContainer) {
-                googlePlusContainer.style.visibility = "visible";
-                googlePlusContainer.style.height = "auto";
+                googlePlusContainer.style.display = "block";
                 document.getElementById("royt").style.display = "none";
                 var redditButton = document.getElementById("royt_switchtoreddit");
                 if (redditButton) {
@@ -743,8 +746,7 @@ var RoYT;
          */
         CommentSection.prototype.onRedditClick = function(eventObject) {
             var googlePlusContainer = Application.getYouTubeSection("serviceCommentsContainer");
-            googlePlusContainer.style.visibility = "collapse";
-            googlePlusContainer.style.height = "0";
+            googlePlusContainer.style.display = "none";
             var roytContainer = document.getElementById("royt");
             roytContainer.style.display = "block";
             var redditButton = document.getElementById("royt_switchtoreddit");
@@ -759,8 +761,7 @@ var RoYT;
             var roytContainer = document.getElementById("royt");
             roytContainer.style.display = "none";
             var googlePlusContainer = Application.getYouTubeSection("serviceCommentsContainer");
-            googlePlusContainer.style.visibility = "visible";
-            googlePlusContainer.style.height = "auto";
+            googlePlusContainer.style.display = "block";
             var redditButton = document.getElementById("royt_switchtoreddit");
             redditButton.style.display = "block";
         };
@@ -1130,8 +1131,7 @@ var RoYT;
             var roytContainer = document.getElementById("royt");
             roytContainer.style.display = "none";
             var googlePlusContainer = Application.getYouTubeSection("serviceCommentsContainer");
-            googlePlusContainer.style.visibility = "visible";
-            googlePlusContainer.style.height = "auto";
+            googlePlusContainer.style.display = "block";
             var redditButton = document.getElementById("royt_switchtoreddit");
             redditButton.style.display = "block";
             /* Terrible hack to force Google+ to reload the comments by making it think the user has resized the window.
@@ -1913,8 +1913,7 @@ var RoYT;
             var roytContainer = document.getElementById("royt");
             roytContainer.style.display = "none";
             var googlePlusContainer = Application.getYouTubeSection("serviceCommentsContainer");
-            googlePlusContainer.style.visibility = "visible";
-            googlePlusContainer.style.height = "auto";
+            googlePlusContainer.style.display = "block";
             var redditButton = document.getElementById("royt_switchtoreddit");
             redditButton.style.display = "block";
         };

@@ -14,7 +14,9 @@ body {
     background: #fff;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     overflow: visible;
-    margin-top: 30px;
+    margin-top: 10px;
+}
+.new-layout {
     font-size: 1.4rem;
 }
 #royt a {
@@ -885,7 +887,6 @@ a[href$="/spoiler"]::before {
 }
 #allowOnChannelContainer {
     margin-left: 15px;
-    font-size: 1.4rem;
 }
 #royt .royt_tab.active > a {
     pointer-events: auto;
