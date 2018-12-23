@@ -332,6 +332,16 @@ var RoYT;
             return div;
         };
 
+        /**
+         * unescape Parses all HTML escape characters via DOMParser.
+         * @param s The text to parse.
+         * @returns string The text with all HTML escape characters converted to human readable.
+         */
+        Utilities.unescape = function(s) {
+            var parser = new DOMParser();
+            return parser.parseFromString(s, "text/html").body.textContent;
+        }
+
         return Utilities;
     })();
     RoYT.Utilities = Utilities;
@@ -955,7 +965,7 @@ var RoYT;
                 this.threadContainer.classList.add("signedout");
             }
             var title = this.threadContainer.querySelector(".title");
-            title.textContent = this.threadInformation.title;
+            title.textContent = Utilities.unescape(this.threadInformation.title);
             title.setAttribute("href", "http://reddit.com" + this.threadInformation.permalink);
             /* Set the username of the author and link to them */
             var username = this.threadContainer.querySelector(".royt_author");
