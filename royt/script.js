@@ -385,7 +385,7 @@ var RoYT;
                 Preferences.preferenceCache["showGooglePlusWhenNoPosts"] = result.showGooglePlusWhenNoPosts || false;
                 Preferences.preferenceCache["showGooglePlusButton"] = result.showGooglePlusButton || false;
 
-                Preferences.preferenceCache["excludedSubredditsSelectedByUser"] = result.excludedSubreddits || "[]";
+                Preferences.preferenceCache["excludedSubredditsSelectedByUser"] = result.excludedSubredditsSelectedByUser || "[]";
 
                 Preferences.preferenceCache["threadSortType"] = result.threadSortType || "confidence";
 
@@ -462,12 +462,15 @@ var RoYT;
                                 var getExcludedSubreddits = RoYT.Preferences.get("excludedSubredditsSelectedByUser");
                                 var sortedResultCollection = {};
                                 finalResultCollection.forEach(function(thread) {
-                                    if (getExcludedSubreddits.indexOf(thread.subreddit.toLowerCase()) !== -1)
+                                    if(getExcludedSubreddits.indexOf(thread.subreddit.toLowerCase()) >= 0){
                                         return;
-                                    if (thread.score < RoYT.Preferences.get("hiddenPostScoreThreshold"))
+                                    }
+                                    if(thread.score < RoYT.Preferences.get("hiddenPostScoreThreshold")) {
                                         return;
-                                    if (!sortedResultCollection.hasOwnProperty(thread.subreddit))
+                                    }
+                                    if(!sortedResultCollection.hasOwnProperty(thread.subreddit)) {
                                         sortedResultCollection[thread.subreddit] = [];
+                                    }
                                     sortedResultCollection[thread.subreddit].push(thread);
                                 });
                                 // Sort posts into collections by what subreddit they appear in.

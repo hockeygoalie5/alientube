@@ -56,6 +56,7 @@ function submitAddExcludedSubreddit() {
 }
 
 function addExcludedSubreddit(excludedSubreddit) {
+  excludedSubreddit = excludedSubreddit.toLowerCase();
   var excludedSubredditsNode = document.getElementById("excludedSubreddits");
   if(excludedSubreddits.indexOf(excludedSubreddit) < 0) {
     excludedSubreddits.push(excludedSubreddit);
