@@ -64,10 +64,10 @@ var RoYT;
                         selector = "ytd-app";
                         break;
                     case "commentsContainer":
-                        selector = "ytd-comments#comments.style-scope.ytd-watch";
+                        selector = "ytd-comments#comments.style-scope.ytd-watch-flexy";
                         break;
                     case "serviceCommentsContainer":
-                        selector = "ytd-item-section-renderer.style-scope.ytd-comments";
+                        selector = "ytd-item-section-renderer#sections.style-scope.ytd-comments";
                         break;
                     case "actionsContainer":
                         selector = "div#owner-container.style-scope.ytd-video-owner-renderer";
