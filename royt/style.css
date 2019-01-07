@@ -124,6 +124,9 @@ body {
 #royt header .title {
     font-size: 130%;
 }
+#royt header a.title {
+    text-decoration: none;
+}
 #royt header .royt_author[data-username="[deleted]"] {
     color: #737373;
     font-weight: normal;
@@ -575,8 +578,8 @@ body {
         padding-right: 8px;
     }
 }
-#royt_overflow {
-    display: inline-block;
+.royt_dropdown {
+    display: none;
     position: relative;
     box-sizing: border-box;
     vertical-align: bottom;
@@ -588,19 +591,19 @@ body {
     border-bottom: none;
     cursor: pointer;
 }
-#royt_overflow.show {
+.royt_dropdown.show {
     background: #f8f8f8;
 }
-#royt_overflow.show ul {
+.royt_dropdown.show ul {
     display: block;
 }
-#royt_overflow:focus {
+.royt_dropdown:focus {
     outline: 0;
 }
-#royt_overflow:hover {
+.royt_dropdown:hover {
     background: #f8f8f8;
 }
-#royt_overflow img {
+.royt_dropdown img {
     opacity: 0.5;
     position: absolute;
     top: 0;
@@ -614,9 +617,8 @@ body {
     width: 0;
     height: 0;
 }
-#royt_overflow ul {
+.royt_dropdown ul {
     min-width: 130px;
-    max-width: 250px;
     text-overflow: ellipsis;
     box-sizing: border-box;
     opacity: 1;
@@ -632,7 +634,7 @@ body {
     -moz-transition: opacity 1s easy-in;
     transition: opacity 1s easy-in;
 }
-#royt_overflow ul li {
+.royt_dropdown ul li {
     line-height: 2.5;
     padding-left: 10px;
     padding-right: 10px;
@@ -640,7 +642,7 @@ body {
     color: #a2a2a2;
     list-style-type: none;
 }
-#royt_overflow ul li:hover {
+.royt_dropdown ul li:hover {
     color: #fff;
 }
 .royt_error {
@@ -859,13 +861,13 @@ a[href$="/spoiler"]::before {
 [dark] .royt_tab.active:hover {
     background: #242424 !important;
 }
-[dark] #royt_overflow {
+[dark] .royt_dropdown {
     background: #242424 !important;
 }
-[dark] #royt_overflow:hover {
+[dark] .royt_dropdown:hover {
     background-image: #575757;
 }
-[dark] #royt_overflow ul {
+[dark] .royt_dropdown ul {
     background: #262626;
 }
 [dark] .royt_score,
@@ -911,6 +913,6 @@ a[href$="/spoiler"]::before {
 [dark] #allowOnChannelContainer {
   color: rgba(255, 255, 255, 0.88);
 }
-#royt #royt_overflow > ul > li:hover {
+#royt .royt_dropdown > ul > li:hover {
     background: #fd4040;
 }
