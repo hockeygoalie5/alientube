@@ -694,7 +694,12 @@ var RoYT;
         CommentSection.prototype.insertTabsIntoDocument = function(tabContainer, selectTabAtIndex) {
             var overflowContainer = tabContainer.querySelector("#royt_overflow");
             var len = this.threadCollection.length;
-            var maxWidth = Application.getYouTubeSection("commentsContainer").offsetWidth - 80;
+            var maxWidth = Application.getYouTubeSection("commentsContainer").getBoundingClientRect().width - 80;
+
+            if(maxWidth <= 0) {
+                setTimeout(this.insertTabsIntoDocument, 200);
+                return
+            }
 
             var width = (21 + this.threadCollection[0][0].subreddit.length * 7);
             var i = 0;
