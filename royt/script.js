@@ -429,7 +429,7 @@ var RoYT;
     var CommentSection = (function() {
         function CommentSection(currentVideoIdentifier) {
             this.threadCollection = new Array();
-            this.storedTabCollection = new Array();
+            this.downloadedThreads = new Array();
             // Make sure video identifier is not null. If it is null we are not on a video page so we will just time out.
             if (currentVideoIdentifier) {
                 // Load the html5 template file from disk and wait for it to load.
@@ -489,15 +489,14 @@ var RoYT;
                                     }
                                 }
                                 if (this.threadCollection.length > 0) {
-                                    // Sort subreddits so there is only one post per subreddit, and that any subreddit or post that is linked to in the description appears first.
+                                    // Sort subreddits so that any subreddit or post that is linked to in the description appears first.
                                     this.threadCollection.sort(function(a, b) {
                                         return b[0].score > a[0].score;
                                     }.bind(this));
                                     for (var i = 0, len = this.threadCollection.length; i < len; i += 1) {
                                         if (this.threadCollection[i][0].subreddit === preferredSubreddit) {
-                                            var threadDataForFirstTab = this.threadCollection[i][0];
-                                            this.threadCollection.splice(i, 1);
-                                            this.threadCollection.splice(0, 0, threadDataForFirstTab);
+                                            var threadData = this.threadCollection.splice(i, 1)[0];
+                                            this.threadCollection.unshift(threadData)
                                             break;
                                         }
                                     }
@@ -513,7 +512,7 @@ var RoYT;
                                         this.threadCollection[0][0].official = true;
                                     }
                                     // Load the first tab.
-                                    this.downloadThread(this.threadCollection[0]);
+                                    this.downloadThread();
                                     return;
                                 }
                             }
@@ -525,61 +524,46 @@ var RoYT;
         }
         /**
          * Display a tab in the comment section, if it is locally cached, use that, if not, download it.
-         * @param threadData Data about the thread to download from a Reddit search page.
+         * @param subredditIndex The index of the tab to show.
          * @private
          */
-        CommentSection.prototype.showTab = function(threadData) {
-            var getTabById = this.storedTabCollection.filter(function(x) {
-                return x[0].data.children[0].data.name === threadData.name;
-            });
-            if (getTabById.length > 0) {
-                new RoYT.CommentThread(getTabById[0], this);
-            } else {
-                this.downloadThread(threadData);
+        CommentSection.prototype.showTab = function(subredditIndex = 0) {
+            for(var thread of this.downloadedThreads) {
+                if(thread[0].data.children[0].data.id == this.threadCollection[subredditIndex][0].id) {
+                    new RoYT.CommentThread(thread, this, subredditIndex);
+                    return;
+                }
             }
+            this.downloadThread(subredditIndex);
         };
         /**
          * Download a thread from Reddit.
-         * @param threadData Data about the thread to download from a Reddit search page.
-         * @param threadIndex Index of the thread in the subreddit collection to load. Defaults to the first one (0).
+         * @param subredditIndex The index from threadCollection of the tab to download. Defaults to 0.
          */
-        CommentSection.prototype.downloadThread = function(threadData, threadIndex = 0) {
+        CommentSection.prototype.downloadThread = function(subredditIndex = 0) {
             var loadingScreen = new RoYT.LoadingScreen(this, RoYT.LoadingState.LOADING, RoYT.Application.localisationManager.get("loading_post_message"));
             var roytCommentContainer = document.getElementById("royt_comments");
             while (roytCommentContainer.firstChild) {
                 roytCommentContainer.removeChild(roytCommentContainer.firstChild);
             }
             roytCommentContainer.appendChild(loadingScreen.HTMLElement);
-            var requestUrl = "https://api.reddit.com/r/" + threadData[threadIndex].subreddit + "/comments/" + threadData[threadIndex].id + ".json?sort=" + RoYT.Preferences.get("threadSortType");
+
+            var threadCollection = this.threadCollection[subredditIndex];
+            var thread = threadCollection[0];
+            var requestUrl = "https://api.reddit.com/r/" + thread.subreddit + "/comments/" + thread.id + ".json?sort=" + RoYT.Preferences.get("threadSortType");
             new RoYT.Reddit.Request(requestUrl, RoYT.RequestType.GET, function(responseObject) {
-                // Remove previous tab from memory if preference is unchecked; will require a download on tab switch.
-                responseObject[0].data.children[0].data.official = threadData[threadIndex].official;
-                new RoYT.CommentThread(responseObject, this);
-                this.storedTabCollection.push(responseObject);
-                if(threadData.length > 1) {
-                    var dropdown = document.querySelector("#royt_comments .royt_dropdown");
-                    dropdown.style.display = "inline-block";
-                
-                    dropdown.addEventListener("click", function() {
-                        dropdown.classList.add("show");
-                    }, false);
-                    
-                    document.body.addEventListener("click", function() {
-                        dropdown.classList.remove("show");
-                    }, true);
+                var threadData = responseObject[0].data.children[0].data
+                threadData.official = thread.official;
 
-                    for(var i = 0; i < threadData.length; i++) {
-                        if(i == threadIndex) {
-                            continue;
-                        }
+                new RoYT.CommentThread(responseObject, this, subredditIndex);
 
-                        var li = document.createElement("li");
-                        li.setAttribute("data-value", i);
-                        li.addEventListener("click", this.downloadThread.bind(this, threadData, i), false);
-                        li.textContent = threadData[i].score + " | " + threadData[i].title;
-                        dropdown.querySelector("ul").appendChild(li);
+                for(var i = 0; i < this.downloadedThreads.length; i++) {
+                    if(this.downloadedThreads[i][0].data.children[0].data.id == threadData.id) {
+                        this.downloadedThreads.splice(i, 1);
+                        break;
                     }
                 }
+                this.downloadedThreads.push(responseObject);
             }.bind(this), null, loadingScreen);
         };
         /**
@@ -630,7 +614,9 @@ var RoYT;
             /* Apply style adjustments for new layout */
             if(!Utilities.useOldYouTubeLayout()) {
                 redditContainer.classList.add("new-layout");
-                allowOnChannelContainer.classList.add("new-layout");
+                if(allowOnChannelContainer) {
+                    allowOnChannelContainer.classList.add("new-layout");
+                }
             }
             /* Add RoYT contents */
             redditContainer.appendChild(contents);
@@ -697,7 +683,7 @@ var RoYT;
             var maxWidth = Application.getYouTubeSection("commentsContainer").getBoundingClientRect().width - 80;
 
             if(maxWidth <= 0) {
-                setTimeout(this.insertTabsIntoDocument, 200);
+                setTimeout(this.insertTabsIntoDocument.bind(this, tabContainer, selectTabAtIndex), 200);
                 return
             }
 
@@ -875,7 +861,7 @@ var RoYT;
                 }
                 /* Mark the new tab as selected and start downloading it. */
                 tabElementClickedByUser.classList.add("active");
-                this.showTab(this.threadCollection[currentIndexOfNewTab]);
+                this.showTab(currentIndexOfNewTab);
             }
         };
         /**
@@ -904,7 +890,7 @@ var RoYT;
             this.clearTabsFromTabContainer();
             this.insertTabsIntoDocument(tabContainer, 0);
             /* Start downloading the new tab. */
-            this.showTab(this.threadCollection[0]);
+            this.showTab();
             eventObject.stopPropagation();
         };
         /**
@@ -959,6 +945,17 @@ var RoYT;
         CommentSection.prototype.getVideoSearchString = function(videoID) {
             return encodeURI("(url:" + videoID + ") AND (site:youtube.com OR site:youtu.be)");
         };
+        /**
+         * Switch to a different thread within a subreddit
+         * @param subredditIndex The index of the subreddit's thread collection
+         * @param threadIndex The index of the thread within the collection to load
+         * @private
+         */
+        CommentSection.prototype.switchToThread = function(subredditIndex, threadIndex) {
+            var threadData = this.threadCollection[subredditIndex].splice(threadIndex, 1)[0];
+            this.threadCollection[subredditIndex].unshift(threadData);
+            this.showTab(subredditIndex);
+        };
         return CommentSection;
     })();
     RoYT.CommentSection = CommentSection;
@@ -968,9 +965,10 @@ var RoYT;
      * @class CommentThread
      * @param threadData JavaScript object containing all information about the Reddit thread.
      * @param commentSection The comment section object the thread exists within.
+     * @param subredditIndex The index of the thread's subreddit in the thread collection
      */
     var CommentThread = (function() {
-        function CommentThread(threadData, commentSection) {
+        function CommentThread(threadData, commentSection, subredditIndex) {
             this.sortingTypes = [
                 "confidence",
                 "top",
@@ -981,6 +979,7 @@ var RoYT;
             ];
             this.children = new Array();
             this.commentSection = commentSection;
+            this.subredditIndex = subredditIndex;
             this.threadInformation = threadData[0].data.children[0].data;
             this.commentData = threadData[1].data.children;
             RoYT.Preferences.set("redditUserIdentifierHash", threadData[0].data.modhash);
@@ -1053,15 +1052,7 @@ var RoYT;
             saveItemToRedditList.addEventListener("click", this.onSaveButtonClick.bind(this), false);
             /* Set the button text and the event handler for the "refresh" button */
             var refreshCommentThread = this.threadContainer.querySelector(".refresh");
-            refreshCommentThread.addEventListener("click", function() {
-                this.commentSection.threadCollection.forEach(function(subreddit) {
-                    subreddit.forEach(function(item) {
-                        if (item.id === this.threadInformation.id) {
-                            this.commentSection.downloadThread(item);
-                        }
-                    });
-                });
-            }, false);
+            refreshCommentThread.addEventListener("click", this.refresh.bind(this), false);
             refreshCommentThread.textContent = RoYT.Application.localisationManager.get("post_button_refresh");
             /* Set the button text and the link for the "give gold" button */
             var giveGoldToUser = this.threadContainer.querySelector(".giveGold");
@@ -1079,13 +1070,7 @@ var RoYT;
             sortController.selectedIndex = this.sortingTypes.indexOf(RoYT.Preferences.get("threadSortType"));
             sortController.addEventListener("change", function() {
                 RoYT.Preferences.set("threadSortType", sortController.children[sortController.selectedIndex].getAttribute("value"));
-                this.commentSection.threadCollection.forEach(function(subreddit) {
-                    subreddit.forEach(function(item) {
-                        if (item.id === this.threadInformation.id) {
-                            this.commentSection.downloadThread(item);
-                        }
-                    });
-                });
+                this.refresh();
             }, false);
             /* Set the state of the voting buttons */
             var voteController = this.threadContainer.querySelector(".vote");
@@ -1118,6 +1103,28 @@ var RoYT;
                 officialLabel.textContent = RoYT.Application.localisationManager.get("post_message_official");
                 officialLabel.style.display = "inline-block";
             }
+
+            /* Create the dropdown for additional threads from the subreddit */
+            if(this.commentSection.threadCollection[this.subredditIndex].length > 1) {
+                var dropdown = this.threadContainer.querySelector("#royt_comments .royt_dropdown");
+                dropdown.style.display = "inline-block";
+            
+                dropdown.addEventListener("click", function() {
+                    dropdown.classList.add("show");
+                }, false);
+                
+                document.body.addEventListener("click", function() {
+                    dropdown.classList.remove("show");
+                }, true);
+
+                for(var i = 1; i < this.commentSection.threadCollection[this.subredditIndex].length; i++) {
+                    var li = document.createElement("li");
+                    li.addEventListener("click", this.commentSection.switchToThread.bind(this.commentSection, this.subredditIndex, i), false);
+                    li.textContent = this.commentSection.threadCollection[this.subredditIndex][i].score + " | " + this.commentSection.threadCollection[this.subredditIndex][i].title;
+                    dropdown.querySelector("ul").appendChild(li);
+                }
+            }
+
             /* Start iterating the top level comments in the comment section */
             this.commentData.forEach(function(commentObject) {
                 if (commentObject.kind === "more") {
@@ -1262,6 +1269,12 @@ var RoYT;
             }
             new RoYT.CommentField(this);
         };
+        /** 
+         * Deletes and redownloads the comment thread
+         */
+        CommentThread.prototype.refresh = function() {
+            this.commentSection.downloadThread(this.subredditIndex);
+        };
         return CommentThread;
     })();
     RoYT.CommentThread = CommentThread;
@@ -1368,13 +1381,7 @@ var RoYT;
                 });
             }
             // refresh the comments
-            this.commentThread.commentSection.threadCollection.forEach(function(subreddit) {
-                subreddit.forEach(function(item) {
-                    if (item.id === this.threadInformation.id) {
-                        this.commentThread.commentSection.downloadThread(item);
-                    }
-                });
-            });
+            this.commentThread.refresh();
         };
         /**
          * Cancel / Remove the comment field.
@@ -1843,7 +1850,13 @@ var RoYT;
         LoadingScreen.prototype.updateProgress = function(state, alternativeText) {
             this.currentProgressState = state;
             var loadingText = this.representedHTMLElement.querySelector("#royt_loadingtext");
+            if(!loadingText) {
+                loadingText = document.getElementById("royt_loadingtext");
+            }
             var loadingHeader = this.representedHTMLElement.querySelector("#royt_loadingheader");
+            if(!loadingHeader) {
+                loadingHeader = document.getElementById("royt_loadingheader");
+            }
             switch (this.currentProgressState) {
                 case LoadingState.LOADING:
                     this.loadingAttempts = 1;
@@ -2242,7 +2255,7 @@ var RoYT;
                                         commentThread.commentSection.clearTabsFromTabContainer();
                                         tabContainer = document.getElementById("royt_tabcontainer");
                                         commentThread.commentSection.insertTabsIntoDocument(tabContainer, 0);
-                                        commentThread.commentSection.downloadThread(threadCollection[0]);
+                                        commentThread.commentSection.downloadThread();
                                         return;
                                     }
                                 }
