@@ -137,7 +137,7 @@
     },
     "post_button_comments": {
         "message": "Kommentare",
-        "description": "Button for switching between the comment section of Reddit and Google+"
+        "description": "Button for switching between the comment section of Reddit and YouTube"
     },
     "post_button_permalink": {
         "message": "Permalink",
@@ -340,16 +340,16 @@
         "description": "If the score for this comment is less than the input, it will not be shown in the comment section"
     },
     "options_label_showGooglePlusWhenNoPosts": {
-        "message": "Zeige Google+-Kommentare, wenn keine Reddit-Kommentare gefunden werden",
-        "description": "Show the Google+ comments like usual if there are no Reddit comments to see"
+        "message": "Zeige YouTube-Kommentare, wenn keine Reddit-Kommentare gefunden werden",
+        "description": "Show the YouTube comments like usual if there are no Reddit comments to see"
     },
     "options_label_showGooglePlusButton": {
-        "message": "Zeige den Google+-Kommentarbutton",
-        "description": "This option will toggle the visibility of the Google+ comments button."
+        "message": "Zeige den YouTube-Kommentarbutton",
+        "description": "This option will toggle the visibility of the YouTube comments button."
     },
     "options_label_defaultDisplayAction": {
         "message": "Zeige standardmässig die Kommentare von:",
-        "description": "This option will set whether Reddit on Youtube or Google+ is shown by default."
+        "description": "This option will set whether Reddit on Youtube or YouTube is shown by default."
     },
     "options_label_version": {
         "message": "Version",
@@ -372,8 +372,8 @@
         "description": "Message explaining to the user that the list below is of subreddits that will not be shown"
     },
     "options_label_gplus": {
-        "message": "Google+",
-        "description": "Google+ option for the default display option"
+        "message": "YouTube",
+        "description": "YouTube option for the default display option"
     },
     "options_label_royt": {
         "message": "Reddit",

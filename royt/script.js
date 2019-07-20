@@ -598,7 +598,7 @@ var RoYT;
             }
 
             if (serviceCommentsContainer) {
-                /* Add the "switch to Reddit" button in the google+ comment section */
+                /* Add the "switch to Reddit" button in the YouTube comment section */
                 var redditButton = document.getElementById("royt_switchtoreddit");
                 if (!redditButton) {
                     var redditButtonTemplate = RoYT.Application.getExtensionTemplateItem(this.template, "switchtoreddit");
@@ -765,7 +765,7 @@ var RoYT;
             var template = RoYT.Application.getExtensionTemplateItem(this.template, "noposts");
             var message = template.querySelector(".single_line");
             message.textContent = RoYT.Application.localisationManager.get("post_label_noresults");
-            /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
+            /* Set the icon, text, and event listener for the button to switch to the YouTube comments. */
             var googlePlusButton = template.querySelector("#royt_switchtogplus");
             googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
             var googlePlusContainer = Application.getYouTubeSection("serviceCommentsContainer");
@@ -796,8 +796,8 @@ var RoYT;
             redditButton.style.display = "none";
         };
         /**
-         * Switch to the Google+ comment section.
-         * @param eventObject The event object of the click of the Google+ button.
+         * Switch to the YouTube comment section.
+         * @param eventObject The event object of the click of the YouTube button.
          * @private
          */
         CommentSection.prototype.onGooglePlusClick = function(eventObject) {
@@ -1097,7 +1097,7 @@ var RoYT;
             } else if (this.threadInformation.likes === false) {
                 voteController.classList.add("disliked");
             }
-            /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
+            /* Set the icon, text, and event listener for the button to switch to the YouTube comments. */
             var googlePlusButton = this.threadContainer.querySelector("#royt_switchtogplus");
             googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
             var googlePlusContainer = Application.getYouTubeSection("serviceCommentsContainer");
@@ -1171,7 +1171,7 @@ var RoYT;
             new RoYT.Reddit.Report(this.threadInformation.name, this, true);
         };
         /**
-         * Handle the click of the Google+ Button to change to the Google+ comments.
+         * Handle the click of the YouTube Button to change to the YouTube comments.
          * @private
          */
         CommentThread.prototype.onGooglePlusClick = function(eventObject) {
@@ -1181,7 +1181,7 @@ var RoYT;
             googlePlusContainer.style.display = "block";
             var redditButton = document.getElementById("royt_switchtoreddit");
             redditButton.style.display = "block";
-            /* Terrible hack to force Google+ to reload the comments by making it think the user has resized the window.
+            /* Terrible hack to force YouTube to reload the comments by making it think the user has resized the window.
                Having to do this makes me sad.  */
             document.body.style.width = document.body.offsetWidth + "px";
             window.getComputedStyle(document.body, null);
@@ -1892,7 +1892,7 @@ var RoYT;
             var errorImage = this.representedHTMLElement.querySelector("img");
             var errorHeader = this.representedHTMLElement.querySelector("#royt_errorheader");
             var errorText = this.representedHTMLElement.querySelector("#royt_errortext");
-            /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
+            /* Set the icon, text, and event listener for the button to switch to the YouTube comments. */
             var googlePlusButton = this.representedHTMLElement.querySelector("#royt_switchtogplus");
             googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
             var googlePlusContainer = Application.getYouTubeSection("serviceCommentsContainer");
@@ -1955,7 +1955,7 @@ var RoYT;
             RoYT.Application.commentSection = new RoYT.CommentSection(RoYT.Application.getCurrentVideoId());
         };
         /**
-         * Handle the click of the Google+ Button to change to the Google+ comments.
+         * Handle the click of the YouTube Button to change to the YouTube comments.
          * @private
          */
         ErrorScreen.prototype.onGooglePlusClick = function(eventObject) {
