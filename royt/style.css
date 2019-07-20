@@ -549,6 +549,9 @@ body {
     border-bottom: none;
     cursor: pointer;
 }
+.info .royt_dropdown {
+    margin-left: 5px;
+}
 .royt_dropdown.show {
     background: #f8f8f8;
 }
