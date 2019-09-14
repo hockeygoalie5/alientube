@@ -64,13 +64,13 @@ var RoYT;
                         selector = "ytd-app";
                         break;
                     case "commentsContainer":
-                        selector = "ytd-comments#comments.style-scope.ytd-watch-flexy";
+                        selector = "ytd-comments#comments";
                         break;
                     case "serviceCommentsContainer":
-                        selector = "ytd-item-section-renderer#sections.style-scope.ytd-comments";
+                        selector = "ytd-item-section-renderer#sections";
                         break;
                     case "actionsContainer":
-                        selector = "div#owner-container.style-scope.ytd-video-owner-renderer";
+                        selector = "ytd-video-secondary-info-renderer ytd-channel-name#channel-name";
                         break;
                 }
             }

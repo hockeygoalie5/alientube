@@ -221,8 +221,6 @@ body {
     padding-left: 20px;
 }
 #royt article {
-    overflow-wrap: break-word;
-    word-break: break-all;
     padding-bottom: 10px;
 }
 #royt article .royt_togglehide:before {
