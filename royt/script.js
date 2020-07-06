@@ -52,7 +52,7 @@ var RoYT;
                     selector = "ytd-item-section-renderer#sections";
                     break;
                 case "actionsContainer":
-                    selector = "ytd-video-secondary-info-renderer ytd-channel-name#channel-name";
+                    selector = "ytd-channel-name.ytd-video-owner-renderer";
                     break;
             }
             return document.querySelector(selector);
@@ -89,6 +89,13 @@ var RoYT;
             }
             return null;
         };
+        /**
+         * Get the current video channel's name.
+         * @returns channel name.
+         */
+        Application.getCurrentChannelName = function() {
+            return Application.getYouTubeSection("actionsContainer").querySelector("div:nth-child(1)").innerText;
+        }
         /**
          * Get a Reddit-style "x time ago" Timestamp from a unix epoch time.
          * @param epochTime Epoch timestamp to calculate from.
@@ -354,12 +361,12 @@ var RoYT;
                 Preferences.preferenceCache["hiddenCommentScoreThreshold"] = result.hiddenCommentScoreThreshold || -1;
 
                 Preferences.preferenceCache["defaultDisplayAction"] = result.defaultDisplayAction || "royt";
-                Preferences.preferenceCache["channelDisplayActions"] = result.channelDisplayActions || "{}";
+                Preferences.preferenceCache["channelDisplayActions"] = result.channelDisplayActions || {};
 
                 Preferences.preferenceCache["showGooglePlusWhenNoPosts"] = result.showGooglePlusWhenNoPosts || false;
                 Preferences.preferenceCache["showGooglePlusButton"] = result.showGooglePlusButton || false;
 
-                Preferences.preferenceCache["excludedSubredditsSelectedByUser"] = result.excludedSubredditsSelectedByUser || "[]";
+                Preferences.preferenceCache["excludedSubredditsSelectedByUser"] = result.excludedSubredditsSelectedByUser || [];
 
                 Preferences.preferenceCache["threadSortType"] = result.threadSortType || "confidence";
 
@@ -386,9 +393,9 @@ var RoYT;
          */
         Preferences.set = function(key, value) {
             Preferences.preferenceCache[key] = value;
-            browser.storage.sync.set({
-                key: value
-            });
+            var preference = {};
+            preference[key] = value;
+            browser.storage.sync.set(preference);
         };
         return Preferences;
     })();
@@ -868,7 +875,7 @@ var RoYT;
          */
         CommentSection.prototype.allowOnChannelChange = function(eventObject) {
             var allowedOnChannel = eventObject.target.checked;
-            var channelId = Application.getYouTubeSection("actionsContainer").firstChild.innerText;
+            var channelId = Application.getCurrentChannelName();
             var channelDisplayActions = RoYT.Preferences.get("channelDisplayActions");
             channelDisplayActions[channelId] = allowedOnChannel ? "royt" : "gplus";
             RoYT.Preferences.set("channelDisplayActions", channelDisplayActions);
@@ -878,7 +885,7 @@ var RoYT;
          * @private
          */
         CommentSection.prototype.getDisplayActionForCurrentChannel = function() {
-            var channelId = Application.getYouTubeSection("actionsContainer").firstChild.innerText;
+            var channelId = Application.getCurrentChannelName();
 
             var displayActionByUser = RoYT.Preferences.get("channelDisplayActions")[channelId];
             if (displayActionByUser) {
