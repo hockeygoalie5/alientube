@@ -39,40 +39,21 @@ var RoYT;
          */
          Application.getYouTubeSection = function(section) {
             var selector;
-            if(Utilities.useOldYouTubeLayout()) {
-                switch(section) {
-                    default:
-                        return null;
-                    case "page":
-                        selector = "#content";
-                        break;
-                    case "commentsContainer":
-                        selector = "#watch7-content";
-                        break;
-                    case "serviceCommentsContainer":
-                        selector = "#watch-discussion";
-                        break;
-                    case "actionsContainer":
-                        selector = "#watch7-user-header";
-                        break;
-                }
-            } else {
-                switch(section) {
-                    default:
-                        return null;
-                    case "page":
-                        selector = "ytd-app";
-                        break;
-                    case "commentsContainer":
-                        selector = "ytd-comments#comments";
-                        break;
-                    case "serviceCommentsContainer":
-                        selector = "ytd-item-section-renderer#sections";
-                        break;
-                    case "actionsContainer":
-                        selector = "ytd-video-secondary-info-renderer ytd-channel-name#channel-name";
-                        break;
-                }
+            switch(section) {
+                default:
+                    return null;
+                case "page":
+                    selector = "ytd-app";
+                    break;
+                case "commentsContainer":
+                    selector = "ytd-comments#comments";
+                    break;
+                case "serviceCommentsContainer":
+                    selector = "ytd-item-section-renderer#sections";
+                    break;
+                case "actionsContainer":
+                    selector = "ytd-video-secondary-info-renderer ytd-channel-name#channel-name";
+                    break;
             }
             return document.querySelector(selector);
          }
@@ -277,13 +258,6 @@ var RoYT;
         Utilities.isVideoPage = function() {
             return (window.location.pathname === "/watch" || document.querySelector("meta[og:type]").getAttribute("content") === "video");
         };
-
-        /**
-            Determine whether the user is using the old youtube layout.
-        */
-        Utilities.useOldYouTubeLayout = function() {
-            return !!(document.getElementById("watch7-content"));
-        }
 
         /**
          * parseHTML Parses a string of HTML into a DOM element and removes body, style, script, head, title, and iframe tags.
@@ -611,13 +585,7 @@ var RoYT;
                 allowOnChannelCheckbox.addEventListener("change", this.allowOnChannelChange, false);
                 actionsContainer.appendChild(allowOnChannel);
             }
-            /* Apply style adjustments for new layout */
-            if(!Utilities.useOldYouTubeLayout()) {
-                redditContainer.classList.add("new-layout");
-                if(allowOnChannelContainer) {
-                    allowOnChannelContainer.classList.add("new-layout");
-                }
-            }
+
             /* Add RoYT contents */
             redditContainer.appendChild(contents);
             commentsContainer.appendChild(redditContainer);
