@@ -16,3 +16,6 @@ If you do not have `web-ext` and do not want to install it, you can open FireFox
 
 # Translation
 If you want to help translate RoYT, check the [`_locales`](https://github.com/mustafakalash/royt/tree/master/_locales) directory for already existing translations and the localisation format. Only the `message` key of each section needs to be translated. Modified `messages.json` files can be sent to me or updated in a pull request. Thank you!
+
+# Libraries
+This addon uses [Handlebars 4.7.7](https://github.com/handlebars-lang/handlebars.js/blob/v4.7.7/lib/handlebars.js) and [Snuownd](https://github.com/gamefreak/snuownd/commit/e0c2dd44da89b75fc54c0767fc5faa18b7e4ef2f).

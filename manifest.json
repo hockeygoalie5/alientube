@@ -12,7 +12,7 @@
         "strict_min_version": "57.0"
       }
     },
-    "version": "2.4.4",
+    "version": "2.4.5",
     "manifest_version": 2,
     "default_locale": "en_US",
 
@@ -35,7 +35,7 @@
       {
         "matches": ["*://*.youtube.com/*", "*://*.youtu.be/*"],
         "css": ["royt/style.css"],
-        "js": ["royt/snuownd.js", "royt/handlebars-v3.0.3.js", "royt/script.js"]
+        "js": ["royt/snuownd.js", "royt/handlebars-v4.7.7.js", "royt/script.js"]
       }
     ]
 }
